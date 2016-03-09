@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content">
+  <TableLayout
+  android:layout_height="wrap_content"
+  android:layout_width="fill_parent"
+  android:layout_alignParentTop="true"
+  android:id="@+id/table"
+  >
+  <TableRow
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  > 
+  <EditText
+  android:id="@+id/searchbox"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  >
+  </EditText>
+  <Button
+  android:id="@+id/searchbtn"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:text="Go">
+  </Button>
+  </TableRow>
+  </TableLayout>
+ <ListView
+ android:id="@+id/searchresults"
+ android:background="#FFFFFF"
+ android:layout_width="fill_parent"
+ android:layout_height="fill_parent"
+ android:layout_below="@+id/table"
+ android:state_selected="true"
+ android:divider="#424242"
+ android:dividerHeight="2dp"
+ />
+</RelativeLayout>
