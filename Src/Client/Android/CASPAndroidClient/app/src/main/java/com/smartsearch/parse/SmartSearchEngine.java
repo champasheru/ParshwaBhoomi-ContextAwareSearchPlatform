@@ -106,7 +106,7 @@ public class SmartSearchEngine
 			HttpClient httpClient = new DefaultHttpClient();
 			if(serverURL.equals("")){
 				Log.i("Login", "Using default server URL");
-				url = "http://123.236.189.37:8080/SmartSearchServer/";
+				url = "http://127.0.0.1:8080/SmartSearchServer/";
 			}else if(serverURL.startsWith("http") || serverURL.startsWith("https")){
 				url = serverURL+"/SmartSearchServer/";
 			}else{
