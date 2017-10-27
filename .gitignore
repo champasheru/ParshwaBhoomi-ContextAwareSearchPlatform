@@ -6,3 +6,4 @@ lib
 bin
 *.jar
 creds.properties
+.DS_Store
