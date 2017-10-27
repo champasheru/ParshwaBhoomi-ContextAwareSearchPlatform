@@ -24,6 +24,12 @@
 	     <scope>test</scope>
     </dependency>
     <dependency>
+    	<groupId>org.apache.logging.log4j</groupId>
+    	<artifactId>log4j-core</artifactId>
+    	<version>2.8</version>
+  	</dependency>
+  	
+    <dependency>
 	    <groupId>javax.servlet</groupId>
 		<artifactId>javax.servlet-api</artifactId>
 		<version>3.1.0</version>
@@ -34,22 +40,6 @@
 		<artifactId>mysql-connector-java</artifactId>
 		<version>5.1.42</version>
 	</dependency>
-	<!-- Local project specific dependencies -->
-	<dependency>
-	     <groupId>parshwabhoomi-server</groupId>
-	     <artifactId>signpost-core</artifactId>
-	     <version>1.0.</version>
-    </dependency>
-    <dependency>
-	     <groupId>parshwabhoomi-server</groupId>
-	     <artifactId>signpost-commonshttp</artifactId>
-	     <version>1.0.</version>
-    </dependency>
-    <dependency>
-	     <groupId>parshwabhoomi-server</groupId>
-	     <artifactId>commons-codec</artifactId>
-	     <version>1.0.</version>
-    </dependency>
   </dependencies>
   
   <build>
@@ -60,7 +50,22 @@
         	<groupId>org.apache.maven.plugins</groupId>
         	<artifactId>maven-war-plugin</artifactId>
         	<version>3.1.0</version>
-        	</plugin>
+        </plugin>
+        <plugin>
+	   		<groupId>org.codehaus.mojo</groupId>
+	    	<artifactId>exec-maven-plugin</artifactId>
+	    	<version>1.2.1</version>
+	    	<executions>
+	    		<execution>
+	        		<goals>
+	            		<goal>java</goal>
+	            	</goals>
+	        	</execution>
+	     	</executions>
+	     	<configuration>
+	     		<mainClass>org.cs.parshwabhoomi.server.smartsearch.Main</mainClass>	
+	     	</configuration>
+	 	</plugin>	
     </plugins>
   </build>
 </project>

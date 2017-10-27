@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG" strict="true" name="ParshwabhoomiLogConfig" monitorInterval="60">
+	<Properties>
+		<Property name="logDir" value="pblogs"/>
+		<Property name="logFilename" value="pb"/>
+		<Property name="logFilenameExtension" value=".log"/>
+	</Properties>
+	<Appenders>
+		<Appender type="RollingFile" name="RollingFile" fileName="${logDir}/${logFilename}${logFilenameExtension}" filePattern="${logDir}/${logFilename}-%d{yyyy.MM.dd}-%i${logFilenameExtension}">
+			<Policies>
+				<OnStartupTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="10MB" />
+				<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+			<DefaultRolloverStrategy max="10"/>
+			<Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} %thread [%level] %logger %message%n"/>
+		</Appender>
+		<Appender type="Console" name="Console" target="SYSTEM_OUT">
+			<Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} %thread [%level] %logger %message%n"/>
+		</Appender>
+	</Appenders>
+	<!-- While deploying the app in production, please make sure that:
+	1. the console appender ref is commented for com.geotrackers.fleetmgmt logger
+	2. the log level for both Root and com.geotrackers.fleetmgmt loggers is set to either ERROR or WARN
+	 -->
+	<Loggers>
+		<Logger name="org.cs.parshwabhoomi.server" level="debug" additivity="false">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="RollingFile"/>
+		</Logger>
+		<Logger name="org.hibernate" level="info" additivity="false">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="RollingFile"/>
+		</Logger>
+		<Root level="debug">
+			<AppenderRef ref="Console"/>
+		</Root>
+	</Loggers>
+</Configuration>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Context Search</string>
-    <string name="usernameHint">Username</string>
-    <string name="passwordHint">Password</string>
-    <string name="serverURLHint">http://123.236.189.37:8080</string>
-    <string name="loginButton">Login</string>
-    <string name="exitButton">Exit</string>
-</resources>

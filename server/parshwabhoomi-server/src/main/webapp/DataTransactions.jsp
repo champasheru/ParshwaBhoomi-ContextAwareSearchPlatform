@@ -14,7 +14,10 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <%@page import="database.DBManager,datastore.Vendor,datastore.User,java.util.HashMap" %>
+        <%@page import="org.cs.parshwabhoomi.server.database.DBManager, 
+        				org.cs.parshwabhoomi.server.datastore.Vendor, 
+        				org.cs.parshwabhoomi.server.datastore.User, 
+        				java.util.HashMap" %>
         <%
             String registrationFor=request.getParameter("registrationFor");
 

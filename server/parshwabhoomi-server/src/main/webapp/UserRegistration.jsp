@@ -28,7 +28,10 @@
         <%
             }
         %>
-    <%@ page import="datastore.BusinessCategory,java.util.Collection,datastore.Config,datastore.User,database.DBManager" %>
+    <%@ page import="org.cs.parshwabhoomi.server.datastore.BusinessCategory,
+    				java.util.Collection,org.cs.parshwabhoomi.server.datastore.Config,
+    				org.cs.parshwabhoomi.server.datastore.User,
+    				org.cs.parshwabhoomi.server.database.DBManager" %>
     
         <div align="center">
             <form method="post" action="DataTransactions.jsp">

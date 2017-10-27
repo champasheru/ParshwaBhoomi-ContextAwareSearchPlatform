@@ -28,7 +28,9 @@
                 
                 Please select business category:<br/>
                 <select name="category" >
-                <%@ page import="datastore.Config,datastore.BusinessCategory,java.util.Collection" %>
+                <%@ page import="org.cs.parshwabhoomi.server.datastore.Config,
+                				org.cs.parshwabhoomi.server.datastore.BusinessCategory,
+                				java.util.Collection" %>
                 <% 
                     Collection<BusinessCategory> categories=Config.getCategories();
                     for(BusinessCategory category: categories){
