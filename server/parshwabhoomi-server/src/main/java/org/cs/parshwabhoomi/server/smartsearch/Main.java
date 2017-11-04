@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.cs.parshwabhoomi.server.AppContext;
 import org.cs.parshwabhoomi.server.comm.SearchService;
-import org.cs.parshwabhoomi.server.database.DBManager;
+import org.cs.parshwabhoomi.server.dao.DBManager;
 
 /**
  *

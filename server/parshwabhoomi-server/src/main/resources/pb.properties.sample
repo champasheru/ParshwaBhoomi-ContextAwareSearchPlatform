@@ -1,0 +1,14 @@
+#This is a sample proprties file.
+#Make sure you make a copy of this file (without .sample extension) and use it.
+#This file needs to be in the classpath of your app or server deployment.
+
+
+#Creds and API keys
+org.cs.parshwabhoomi.google.api.key=<your google project api key>
+org.cs.parshwabhoomi.google.cse.id=<your google custom search engine id>
+
+#DB
+org.cs.parshwabhoomi.db.username=pbadmin
+org.cs.parshwabhoomi.db.password=pbadmin123
+org.cs.parshwabhoomi.db.driver=com.mysql.jdbc.Driver
+org.cs.parshwabhoomi.db.url=jdbc:mysql://localhost:3306/smartsearch

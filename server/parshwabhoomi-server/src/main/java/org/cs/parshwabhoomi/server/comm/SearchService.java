@@ -16,7 +16,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.cs.parshwabhoomi.server.AppContext;
-import org.cs.parshwabhoomi.server.database.DBManager;
+import org.cs.parshwabhoomi.server.dao.DBManager;
 import org.cs.parshwabhoomi.server.dataparser.SearchResponseParser;
 import org.cs.parshwabhoomi.server.dataparser.XMLSerializer;
 import org.cs.parshwabhoomi.server.datastore.CustomSearchResult;

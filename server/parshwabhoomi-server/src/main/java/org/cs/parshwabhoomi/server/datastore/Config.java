@@ -8,7 +8,7 @@ package org.cs.parshwabhoomi.server.datastore;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.cs.parshwabhoomi.server.database.DBManager;
+import org.cs.parshwabhoomi.server.dao.DBManager;
 
 /**
  *

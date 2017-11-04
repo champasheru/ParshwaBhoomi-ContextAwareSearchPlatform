@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app version="2.3" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <servlet>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    </servlet>
     <servlet>
         <servlet-name>SearchServlet</servlet-name>
         <servlet-class>org.cs.parshwabhoomi.server.servlets.SearchServlet</servlet-class>
@@ -8,6 +11,11 @@
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>org.cs.parshwabhoomi.server.servlets.LoginServlet</servlet-class>
     </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <url-pattern>/v1/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SearchServlet</servlet-name>
         <url-pattern>/Search</url-pattern>

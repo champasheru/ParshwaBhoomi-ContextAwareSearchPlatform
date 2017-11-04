@@ -1,4 +1,4 @@
-package org.cs.parshwabhoomi.server.database;
+package org.cs.parshwabhoomi.server.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

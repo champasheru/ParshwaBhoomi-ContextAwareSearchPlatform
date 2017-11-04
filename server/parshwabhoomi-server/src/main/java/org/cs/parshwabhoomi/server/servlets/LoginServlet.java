@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.cs.parshwabhoomi.server.AppContext;
-import org.cs.parshwabhoomi.server.database.DBManager;
+import org.cs.parshwabhoomi.server.dao.DBManager;
 
 /**
  *

@@ -4,23 +4,28 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
+import org.cs.parshwabhoomi.server.dao.DaoProviderFactory;
+import org.cs.parshwabhoomi.server.dao.RawDaoProvider;
 
 //Singleton
 public class AppContext {
-	private static final String CREDS_PROP_FILE="creds.properties";
+	private static final String CREDS_PROP_FILE="pb.properties";
 	
 	public static final String GOOGLE_API_KEY="org.cs.parshwabhoomi.google.api.key";
 	public static final String GOOGLE_CSE_ID="org.cs.parshwabhoomi.google.cse.id";
 	
-	public static final String FM_JDBC_URL="fm.jdbc.url";
-	public static final String FM_JDBC_DRIVER="fm.jdbc.driver";
-	public static final String FM_JDBC_USERNAME="fm.jdbc.username";
-	public static final String FM_JDBC_PASSWORD="fm.jdbc.password";
+	public static final String PB_JDBC_URL="org.cs.parshwabhoomi.db.url";
+	public static final String PB_JDBC_DRIVER="org.cs.parshwabhoomi.db.driver";
+	public static final String PB_JDBC_USERNAME="org.cs.parshwabhoomi.db.username";
+	public static final String PB_JDBC_PASSWORD="org.cs.parshwabhoomi.db.password";
 	
+	public static final String PB_DAO_IMPL_PACKAGE="org.cs.parshwabhoomi.server.dao.raw.impl";
 	
 	private static AppContext appContext;
 	 
 	private Properties props;
+	
+	private RawDaoProvider daoProvider;
 	
 	private AppContext(){
 		props = new Properties();
@@ -33,6 +38,13 @@ public class AppContext {
 			LogManager.getLogger().error("Couldn't load "+CREDS_PROP_FILE+" file");
 			LogManager.getLogger().error("Please make sure the file exists and/or is in your classpath!");
 		}
+		
+		Properties connectionProps = new Properties();
+		connectionProps.setProperty(RawDaoProvider.CONN_DRIVER, props.getProperty(AppContext.PB_JDBC_DRIVER));
+		connectionProps.setProperty(RawDaoProvider.CONN_URL, props.getProperty(AppContext.PB_JDBC_URL));
+		connectionProps.setProperty(RawDaoProvider.CONN_USERNAME, props.getProperty(AppContext.PB_JDBC_USERNAME));
+		connectionProps.setProperty(RawDaoProvider.CONN_PASSWORD, props.getProperty(AppContext.PB_JDBC_PASSWORD));
+		daoProvider = DaoProviderFactory.create(PB_DAO_IMPL_PACKAGE, connectionProps);
 	}
 	
 	public static AppContext newInstance(){
@@ -42,11 +54,26 @@ public class AppContext {
 		return appContext;
 	}
 	
+//	public static AppContext getDefaultContext(){
+//		return appContext;
+//	}
+	
 	public static AppContext getDefaultContext(){
+		if(appContext == null){
+			appContext = new AppContext();
+		}
 		return appContext;
 	}
 
 	public String getProperty(String propName){
 		return props.getProperty(propName);
 	}
+
+	/**
+	 * @return the daoProvider
+	 */
+	public RawDaoProvider getDaoProvider() {
+		return daoProvider;
+	}
+	
 }
