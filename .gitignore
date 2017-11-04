@@ -8,3 +8,5 @@ bin
 creds.properties
 pb.properties
 .DS_Store
+.classpath
+.settings
