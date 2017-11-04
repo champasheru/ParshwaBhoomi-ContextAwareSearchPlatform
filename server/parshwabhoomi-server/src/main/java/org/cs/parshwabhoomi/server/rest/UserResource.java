@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	28-Oct-2017:7:01:45 PM
  * saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  */
 package org.cs.parshwabhoomi.server.rest;
 
@@ -15,7 +15,7 @@ import org.cs.parshwabhoomi.server.dto.impl.UserLoginRequestDTO;
 
 /**
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
 public interface UserResource {

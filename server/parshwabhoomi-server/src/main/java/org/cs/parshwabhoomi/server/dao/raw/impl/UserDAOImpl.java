@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:19:40 PM
  * saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  */
 package org.cs.parshwabhoomi.server.dao.raw.impl;
 
@@ -16,7 +16,7 @@ import org.cs.parshwabhoomi.server.dao.raw.UserDAO;
 
 /**
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
 public class UserDAOImpl extends AbstractRawDao implements UserDAO {

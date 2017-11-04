@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 /**
  * 
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  * The super interface for all the RESTful resources.
  * Specific resources may define their functionality specific sub-interfaces and provide their concrete implementations.

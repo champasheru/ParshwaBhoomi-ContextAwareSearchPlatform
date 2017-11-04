@@ -1,7 +1,7 @@
 /**
- * gt-fleet-management	11-Jul-2017:7:51:35 PM
+ * parshwabhoomi-server	11-Jul-2017:7:51:35 PM
  * saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  */
 package org.cs.parshwabhoomi.server.dao;
 
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 
 /**
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
 public class AbstractRawDao implements RawDao {

@@ -3,7 +3,7 @@ package org.cs.parshwabhoomi.server.dao;
 /**
  * 
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  * @param <T> can be either javax.persistence.EntityManager or java.sql.Connection.
  * Based on this, the Dao will be either Jpa based i.e. JpaDao or JDBC based raw one i.e. RawDao.

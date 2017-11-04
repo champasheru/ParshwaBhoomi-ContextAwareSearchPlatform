@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:47:00 PM
  * saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  */
 package org.cs.parshwabhoomi.server.rest.impl;
 
@@ -18,7 +18,7 @@ import org.cs.parshwabhoomi.server.rest.UserResource;
 
 /**
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
 @Path("/user")

@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:39:52 PM
  * saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  */
 package org.cs.parshwabhoomi.server.dto.impl;
 
@@ -9,7 +9,7 @@ import org.cs.parshwabhoomi.server.dto.AbstractRequestDTO;
 
 /**
  * @author saurabh
- * git: Saurabh Sirdeshmukh saurabh@geotrackers.com
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
 public class UserLoginRequestDTO extends AbstractRequestDTO {
