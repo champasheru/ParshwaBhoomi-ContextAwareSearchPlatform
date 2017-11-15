@@ -7,7 +7,7 @@ package org.cs.parshwabhoomi.server.dataparser;
 
 import java.util.Collection;
 
-import org.cs.parshwabhoomi.server.datastore.SearchResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
 
 /**
  *
@@ -27,7 +27,7 @@ public class XMLSerializer {
         serializedXML.append(xmlHeader+"\n");
         serializedXML.append("<resultset>\n");
         for(SearchResult sr:results){
-            serializedXML.append(sr.getSearchResultXML());
+            //serializedXML.append(sr.getSearchResultXML());
         }
         serializedXML.append("</resultset>");
         System.out.println("Done!!!");

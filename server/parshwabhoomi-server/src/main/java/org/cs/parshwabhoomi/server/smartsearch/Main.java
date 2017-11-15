@@ -6,12 +6,16 @@
 package org.cs.parshwabhoomi.server.smartsearch;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
-import org.cs.parshwabhoomi.server.comm.SearchService;
+import org.cs.parshwabhoomi.server.core.GoogleSearchService;
+import org.cs.parshwabhoomi.server.core.SearchService;
 import org.cs.parshwabhoomi.server.dao.DBManager;
+import org.cs.parshwabhoomi.server.dto.impl.SearchResultResponseDTO;
 
 /**
  *
@@ -23,18 +27,24 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        SearchService service;
-        AppContext.newInstance();
-        try {
-            DBManager dbManager=DBManager.getDBManager();
-            dbManager.getSearchResultsFor("apple","saurabh",null,null,"Pune");
-            service=new SearchService("Google");
-            System.out.println("\n********************************\n");
-            String resultsXML=service.getSearchResultsXMLV2For("apple","saurabh","18.51657820","73.84310780");
-            System.out.println("Main: Results ===\n"+resultsXML+"\n====");      
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    	GoogleSearchService googleSearchService = new GoogleSearchService();
+        List<SearchResultResponseDTO> dtos = googleSearchService.getResults("apple computers Computers Pulachi Wadi,Deccan Gymkhana,Pune");
+        LogManager.getLogger().info("DTO list size from Google search results: "+dtos.size());
+        
+//        SearchService service;
+//        AppContext.newInstance();
+//        try {
+//        	
+//            
+//            DBManager dbManager=DBManager.getDBManager();
+//            dbManager.getSearchResultsFor("apple","saurabh",null,null,"Pune");
+//            service=new SearchService("Google");
+//            System.out.println("\n********************************\n");
+//            String resultsXML=service.getSearchResultsXMLV2For("apple","saurabh","18.51657820","73.84310780");
+//            System.out.println("Main: Results ===\n"+resultsXML+"\n====");    
+//        } catch (IOException ex) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
 }

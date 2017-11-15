@@ -29,7 +29,7 @@ public class UserResourceImpl extends AbstractResource implements UserResource {
 	 */
 	@Override
 	public Response login(UserLoginRequestDTO loginRequestDTO) {
-		LogManager.getLogger().info("Validating User Login: "+loginRequestDTO.getUsername());
+		LogManager.getLogger().info("Validating UserCredential Login: "+loginRequestDTO.getUsername());
 		UserDAOImpl userDAOImpl = (UserDAOImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("UserDAOImpl");
 		boolean isValid = userDAOImpl.isValidUser(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
 		userDAOImpl.close();

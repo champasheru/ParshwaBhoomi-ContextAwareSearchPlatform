@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.cs.parshwabhoomi.server.datastore.BusinessCategory;
-import org.cs.parshwabhoomi.server.datastore.Config;
-import org.cs.parshwabhoomi.server.datastore.CustomSearchResult;
-import org.cs.parshwabhoomi.server.datastore.User;
-import org.cs.parshwabhoomi.server.datastore.Vendor;
+import org.cs.parshwabhoomi.server.domainobjects.BusinessCategory;
+import org.cs.parshwabhoomi.server.domainobjects.Config;
+import org.cs.parshwabhoomi.server.domainobjects.PBSearchResult;
+import org.cs.parshwabhoomi.server.domainobjects.UserCredential;
+import org.cs.parshwabhoomi.server.domainobjects.BusinessEntity;
 
 //Implemented as a Singleton
 public class DBManager {
@@ -75,7 +75,7 @@ public class DBManager {
     }
     
     
-    public ArrayList<CustomSearchResult> getSearchResultsFor(String searchKeyword,String username,String routeLane,String sublocality,String locality) {
+    public ArrayList<PBSearchResult> getSearchResultsFor(String searchKeyword,String username,String routeLane,String sublocality,String locality) {
         String optionalClause="";
         
         if(routeLane!=null && sublocality!=null){
@@ -111,7 +111,7 @@ public class DBManager {
                 
                        
         System.out.println("Custom Result for Vendors Query:\n"+query+"\n");
-        ArrayList<CustomSearchResult> customSearchResults = null;
+        ArrayList<PBSearchResult> pBSearchResults = null;
         
         Statement statement=null;
         ResultSet rs = null;
@@ -123,18 +123,18 @@ public class DBManager {
                 return null;
             } else {
                 System.out.println("__Custom search results found...");
-                customSearchResults=new ArrayList<CustomSearchResult>();
+                pBSearchResults=new ArrayList<PBSearchResult>();
                 String address="";
                 rs.beforeFirst();
                 while (rs.next()) {
-                    CustomSearchResult csr= new CustomSearchResult();
-                    csr.setName(rs.getString("name"));
+                    PBSearchResult csr= new PBSearchResult();
+                    csr.setUsername(rs.getString("name"));
                     csr.setCategory(rs.getString("category_name"));
                     address=address+rs.getString("route_or_lane")+","+rs.getString("sublocality")+","+rs.getString("locality");
                     csr.setAddress(address);
                     csr.setContact(rs.getInt("contact"));
                     csr.setOfferings(rs.getString("advertisement_and_offerings"));
-                    customSearchResults.add(csr);
+                    pBSearchResults.add(csr);
                 }
             }
         } catch (SQLException sqle) {
@@ -143,8 +143,8 @@ public class DBManager {
             rs = null;
         }
         
-        System.out.println("Custom search results count = "+customSearchResults.size());
-        return customSearchResults;
+        System.out.println("Custom search results count = "+pBSearchResults.size());
+        return pBSearchResults;
     }
     
     //Change it to HashMap<String,Integer> whereby returning (category_id,category_name)
@@ -168,7 +168,7 @@ public class DBManager {
                     BusinessCategory category=new BusinessCategory();
                     category.setId(rs.getInt("id"));
                     category.setName(rs.getString("category_name"));
-                    category.setUiDescription(rs.getString("category_description"));
+                    category.setDescription(rs.getString("category_description"));
                     categories.put(category.getName(), category);
                 }
             }
@@ -181,33 +181,33 @@ public class DBManager {
         return categories;
     }
     
-    public void addUser(User user){
+    public void addUser(UserCredential userCredential){
         //First add the basic user info into the users table 
-        int userID=this.addUserInfo(user);
+        int userID=this.addUserInfo(userCredential);
         if(userID>0){
-            this.addUserPreferences(userID,user.getUserPrefs());
+            this.addUserPreferences(userID,userCredential.getUserPrefs());
         }
     }
     
     //Adds the new user record
-    private int addUserInfo(User user){
+    private int addUserInfo(UserCredential userCredential){
         String query = "INSERT INTO users (username,password,address,contact_no,education,work) " + "VALUES (?,?,?,?,?,?)";
-        String userIDQuery="SELECT id from users WHERE username='"+user.getName()+"'";
+        String userIDQuery="SELECT id from users WHERE username='"+userCredential.getUsername()+"'";
         
         PreparedStatement statement = null;
         int status = 0;
         try {
             statement = connection.prepareStatement(query);
-            statement.setString(1, user.getName());
-            statement.setString(2, user.getPassword());
-            statement.setString(3, user.getAddress());
-            statement.setInt(4, user.getContactNo());
-            statement.setString(5, user.getEducationInfo());
-            statement.setString(6, user.getWorkInfo());
+            statement.setString(1, userCredential.getUsername());
+            statement.setString(2, userCredential.getPassword());
+            statement.setString(3, userCredential.getAddress());
+            statement.setInt(4, userCredential.getContactNo());
+            statement.setString(5, userCredential.getEducationInfo());
+            statement.setString(6, userCredential.getWorkInfo());
 
             status = statement.executeUpdate();
             if (status > 0) {
-                System.out.println("__The User added successfully!");
+                System.out.println("__The UserCredential added successfully!");
                 ResultSet rs=connection.createStatement().executeQuery(userIDQuery);
                 if(rs.next()){
                     return rs.getInt("id");
@@ -263,14 +263,14 @@ public class DBManager {
                             }                           
                         }
                         if (status > 0) {
-                            System.out.println("__The MULTIPLE User Preference added successfully for category: "+category.getName());
+                            System.out.println("__The MULTIPLE UserCredential Preference added successfully for category: "+category.getName());
                         }
                     }else{//If only single pref is available,then add it directly.
                         statement.setInt(2, category.getId());
                         statement.setString(3, pref);
                         status = statement.executeUpdate();
                         if (status > 0) {
-                            System.out.println("__The SINGLE User Preference added successfully!");
+                            System.out.println("__The SINGLE UserCredential Preference added successfully!");
                         }
                     }
                }//end of if the pref for category has some valid value
@@ -283,7 +283,7 @@ public class DBManager {
     }
     
     
-    public int addVendor(Vendor vendor){
+    public int addVendor(BusinessEntity businessEntity){
         String query = "INSERT INTO vendors (category_id,name,route_or_lane,sublocality,locality,contact,advertisement_and_offerings) " +
                 " VALUES (?,?,?,?,?,?,?)";
         PreparedStatement statement = null;
@@ -291,17 +291,17 @@ public class DBManager {
         try {
             statement = connection.prepareStatement(query);
 
-            statement.setInt(1, Config.getValue(vendor.getBusinessCategory()).getId());
-            statement.setString(2, vendor.getVendorName());
-            statement.setString(3, vendor.getRootOrLane());
-            statement.setString(4, vendor.getSublocality());
-            statement.setString(5, vendor.getLocality());
-            statement.setInt(6, vendor.getContactNo());
-            statement.setString(7, vendor.getOfferings());
+            statement.setInt(1, Config.getValue(businessEntity.getBusinessCategory()).getId());
+            statement.setString(2, businessEntity.getVendorName());
+            statement.setString(3, businessEntity.getRootOrLane());
+            statement.setString(4, businessEntity.getSublocality());
+            statement.setString(5, businessEntity.getLocality());
+            statement.setInt(6, businessEntity.getContactNo());
+            statement.setString(7, businessEntity.getOfferings());
 
             status = statement.executeUpdate();
             if (status > 0) {
-                System.out.println("__The Vendor added successfully!");
+                System.out.println("__The BusinessEntity added successfully!");
             }
         } catch (SQLException sqle) {
             System.out.println("__Error:Adding vendor info" + sqle);
@@ -385,7 +385,7 @@ public class DBManager {
     }
 
 
-    public User getUserProfile(String username){
+    public UserCredential getUserProfile(String username){
         String userBasicInfoQuery = "SELECT id,address,contact_no,education,work "
                        +"FROM users "
                        +"WHERE username='"+username+"' ";
@@ -401,7 +401,7 @@ public class DBManager {
         PreparedStatement userPrefsStmt=null;
         ResultSet rs = null;
         ResultSet resultSet=null;
-        User user=null;
+        UserCredential userCredential=null;
         try {
             statement=connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             userPrefsStmt=connection.prepareStatement(userPrefsInfoQuery);
@@ -410,11 +410,11 @@ public class DBManager {
             if (rs.next()) {
                 int userID=rs.getInt("id");
                 userPrefsStmt.setInt(1, userID);
-                user=new User();
-                user.setAddress(rs.getString("address"));
-                user.setContactNo(rs.getInt("contact_no"));
-                user.setEducationInfo(rs.getString("education"));
-                user.setWork(rs.getString("work"));
+                userCredential=new UserCredential();
+                userCredential.setAddress(rs.getString("address"));
+                userCredential.setContactNo(rs.getInt("contact_no"));
+                userCredential.setEducationInfo(rs.getString("education"));
+                userCredential.setWork(rs.getString("work"));
 
                 resultSet=userPrefsStmt.executeQuery();
                 HashMap<String,String> userPrefs=new HashMap<String,String>();
@@ -428,7 +428,7 @@ public class DBManager {
                     System.out.println("_Pref for category= "+categoryName+" preference= "+preference);
                     userPrefs.put(categoryName, userPrefs.get(categoryName)+preference+",");
                 }
-                user.setUserPrefs(userPrefs);
+                userCredential.setUserPrefs(userPrefs);
             }
         } catch (SQLException sqle) {
             System.out.println("__Error:retrieving user profile"+ sqle);
@@ -436,11 +436,11 @@ public class DBManager {
             rs = null;
             resultSet=null;
         }
-        return user;
+        return userCredential;
     }
 
-    public void updateUserProfile(User user){
-        int userID=this.updateUserInfo(user);
+    public void updateUserProfile(UserCredential userCredential){
+        int userID=this.updateUserInfo(userCredential);
         if(userID>0){
             String query = "DELETE FROM user_preferences WHERE user_id='"+userID+"'";
             
@@ -450,8 +450,8 @@ public class DBManager {
                 statement = connection.createStatement();
                 status=statement.executeUpdate(query);
                 if (status > 0) {
-                    System.out.println("__All the previous User Preferences deleted successfully...");
-                    this.addUserPreferences(userID,user.getUserPrefs());
+                    System.out.println("__All the previous UserCredential Preferences deleted successfully...");
+                    this.addUserPreferences(userID,userCredential.getUserPrefs());
                 }
             } catch (SQLException sqle) {
                 System.out.println("__Error:Updating the USER PREFS info" + sqle);
@@ -461,24 +461,24 @@ public class DBManager {
     }
 
     //Updates the existing user record & also returns the user id of the record from the users table of the db.
-    private int updateUserInfo(User user){
+    private int updateUserInfo(UserCredential userCredential){
         String query = "UPDATE users SET address=?,contact_no=?,education=?,work=? "
                        +"WHERE username=?";
 
-        String userIDQuery="SELECT id from users WHERE username='"+user.getName()+"'";
+        String userIDQuery="SELECT id from users WHERE username='"+userCredential.getUsername()+"'";
         PreparedStatement statement = null;
         int status = 0;
         try {
             statement = connection.prepareStatement(query);
-            statement.setString(1, user.getAddress());
-            statement.setInt(2, user.getContactNo());
-            statement.setString(3, user.getEducationInfo());
-            statement.setString(4, user.getWorkInfo());
-            statement.setString(5, user.getName());
+            statement.setString(1, userCredential.getAddress());
+            statement.setInt(2, userCredential.getContactNo());
+            statement.setString(3, userCredential.getEducationInfo());
+            statement.setString(4, userCredential.getWorkInfo());
+            statement.setString(5, userCredential.getUsername());
             
             status = statement.executeUpdate();
             if (status > 0) {
-                System.out.println("__The User Basic Info updated successfully!");
+                System.out.println("__The UserCredential Basic Info updated successfully!");
                 ResultSet rs=connection.createStatement().executeQuery(userIDQuery);
                 if(rs.next()){
                     return rs.getInt("id");
@@ -487,7 +487,7 @@ public class DBManager {
                 }
             }
         } catch (SQLException sqle) {
-            System.out.println("__Error:Updating the Basic User info" + sqle);
+            System.out.println("__Error:Updating the Basic UserCredential info" + sqle);
         } finally {
 
         }

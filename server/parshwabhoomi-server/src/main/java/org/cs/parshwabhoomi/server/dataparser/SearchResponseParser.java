@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.cs.parshwabhoomi.server.datastore.SearchServiceResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchServiceResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

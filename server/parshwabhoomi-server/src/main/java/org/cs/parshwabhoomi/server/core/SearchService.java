@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.cs.parshwabhoomi.server.comm;
+package org.cs.parshwabhoomi.server.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,15 +14,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
 import org.cs.parshwabhoomi.server.dao.DBManager;
 import org.cs.parshwabhoomi.server.dataparser.SearchResponseParser;
 import org.cs.parshwabhoomi.server.dataparser.XMLSerializer;
-import org.cs.parshwabhoomi.server.datastore.CustomSearchResult;
-import org.cs.parshwabhoomi.server.datastore.SearchResult;
-import org.cs.parshwabhoomi.server.datastore.SearchServiceResult;
-import org.cs.parshwabhoomi.server.datastore.Utils;
+import org.cs.parshwabhoomi.server.domainobjects.PBSearchResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchServiceResult;
+import org.cs.parshwabhoomi.server.dto.adapter.GoogleGeocodedAddressResponseDTOAdapter;
+import org.cs.parshwabhoomi.server.dto.impl.SearchResultResponseDTO;
 
 /**
  *
@@ -64,41 +67,41 @@ public class SearchService {
         
         System.out.println("\n[SearchService] The Original search query : "+query);
         
-        //Vendor results
+        //BusinessEntity results
         ArrayList<SearchResult> searchResults=new ArrayList<SearchResult>();
-        ArrayList<CustomSearchResult> customSearchResults=null;
+        ArrayList<PBSearchResult> pBSearchResults=null;
         
         //Find the local vendors pertaining to the user's location.
         DBManager dbManager= DBManager.getDBManager();
         if(address.contains(",")){
             String[] addressComponents=address.split(",");
             if(addressComponents.length==2){
-                customSearchResults=dbManager.getSearchResultsFor(query,username,null,addressComponents[0],addressComponents[1]);
+                pBSearchResults=dbManager.getSearchResultsFor(query,username,null,addressComponents[0],addressComponents[1]);
             }else if(addressComponents.length==3){
-                customSearchResults=dbManager.getSearchResultsFor(query,username,addressComponents[0],addressComponents[1],addressComponents[2]);
+                pBSearchResults=dbManager.getSearchResultsFor(query,username,addressComponents[0],addressComponents[1],addressComponents[2]);
             }else if(addressComponents.length==4){
-                customSearchResults=dbManager.getSearchResultsFor(query,username,addressComponents[1],addressComponents[2],addressComponents[3]);
+                pBSearchResults=dbManager.getSearchResultsFor(query,username,addressComponents[1],addressComponents[2],addressComponents[3]);
             }
         }else{
-            customSearchResults=dbManager.getSearchResultsFor(query,username,null,null,address);
+            pBSearchResults=dbManager.getSearchResultsFor(query,username,null,null,address);
         }
         
         
-        if(customSearchResults!=null && customSearchResults.size()>0){
-            for(int i=0;i<customSearchResults.size();i++){
-                customSearchResults.get(i).setType(SearchResult.RESULT_VENDOR);
+        if(pBSearchResults!=null && pBSearchResults.size()>0){
+            for(int i=0;i<pBSearchResults.size();i++){
+                pBSearchResults.get(i).setType(SearchResult.RESULT_VENDOR);
             }
-            searchResults.addAll(customSearchResults);
+            searchResults.addAll(pBSearchResults);
         }
         
         
-        //User prefs + location results
+        //UserCredential prefs + location results
         //Get the user prefs to build the user specific search query.
         ArrayList<String> userSpecificSearchQueries=dbManager.getUserSpecificSearchQueryForSearchService(query,username);
         if(userSpecificSearchQueries!=null && userSpecificSearchQueries.size()>0){
             for(int i=0;i<userSpecificSearchQueries.size();i++){
                 String aUserSpecificSearchQuery=userSpecificSearchQueries.get(i)+" "+address;
-                System.out.println("_The User specific search query "+i+": "+aUserSpecificSearchQuery);
+                System.out.println("_The UserCredential specific search query "+i+": "+aUserSpecificSearchQuery);
                 
                 ArrayList<SearchServiceResult> searchServiceResults = getSearchResultsWithGoogleCustomSearch(aUserSpecificSearchQuery);
                 if (searchServiceResults != null && searchServiceResults.size() > 0) {
@@ -106,8 +109,8 @@ public class SearchService {
                         searchServiceResults.get(j).setType(SearchResult.RESULT_USERPREF_LOCATION);
                     }
                     searchResults.addAll(searchServiceResults);
-                    System.out.println("[SearchService] User specific query result count "+i+": "+searchServiceResults.size());
-                } 
+                    System.out.println("[SearchService] UserCredential specific query result count "+i+": "+searchServiceResults.size());
+                }
             }
         }
         
@@ -212,7 +215,7 @@ public class SearchService {
             }
             System.out.println("[End ofResponse]\n");
             
-            return Utils.parseJsonForAddress(builder.toString());
+            return GoogleGeocodedAddressResponseDTOAdapter.parseJsonForAddress(builder.toString());
             
         } catch (MalformedURLException ex) {
             System.out.println("[SearchService] Invalid URL: \n");

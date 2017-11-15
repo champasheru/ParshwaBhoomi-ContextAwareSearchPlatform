@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.cs.parshwabhoomi.server.datastore;
+package org.cs.parshwabhoomi.server.domainobjects;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cs.parshwabhoomi.server.comm.SearchService;
+import org.cs.parshwabhoomi.server.core.SearchService;
 
 /**
  *

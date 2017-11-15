@@ -9,13 +9,6 @@
   <name>parshwabhoomi-server Maven Webapp</name>
   <url>http://maven.apache.org</url>
   
-  <repositories>
-  	<repository>
-  		<id>parshwabhoomi-lib</id>
-  		<url>file://${project.basedir}/lib}</url>
-  	</repository>
-  </repositories>
-  
   <dependencies>
     <dependency>
 	     <groupId>junit</groupId>
@@ -59,7 +52,18 @@
     	<artifactId>jersey-media-multipart</artifactId>
     	<version>2.25.1</version>
 	</dependency>
-    
+	
+	<dependency>
+    	<groupId>javax.json</groupId>
+    	<artifactId>javax.json-api</artifactId>
+    	<version>1.1.2</version>
+	</dependency>
+	<dependency>
+    	<groupId>org.glassfish</groupId>
+    	<artifactId>javax.json</artifactId>
+    	<version>1.1.2</version>
+	</dependency>
+	
     <dependency>
 	    <groupId>mysql</groupId>
 		<artifactId>mysql-connector-java</artifactId>
