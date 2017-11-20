@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
 import org.cs.parshwabhoomi.server.core.GoogleSearchService;
-import org.cs.parshwabhoomi.server.core.SearchService;
+import org.cs.parshwabhoomi.server.core.DefaultSearchService;
 import org.cs.parshwabhoomi.server.dao.DBManager;
 import org.cs.parshwabhoomi.server.dto.impl.SearchResultResponseDTO;
 
@@ -31,14 +31,14 @@ public class Main {
         List<SearchResultResponseDTO> dtos = googleSearchService.getResults("apple computers Computers Pulachi Wadi,Deccan Gymkhana,Pune");
         LogManager.getLogger().info("DTO list size from Google search results: "+dtos.size());
         
-//        SearchService service;
+//        DefaultSearchService service;
 //        AppContext.newInstance();
 //        try {
 //        	
 //            
 //            DBManager dbManager=DBManager.getDBManager();
 //            dbManager.getSearchResultsFor("apple","saurabh",null,null,"Pune");
-//            service=new SearchService("Google");
+//            service=new DefaultSearchService("Google");
 //            System.out.println("\n********************************\n");
 //            String resultsXML=service.getSearchResultsXMLV2For("apple","saurabh","18.51657820","73.84310780");
 //            System.out.println("Main: Results ===\n"+resultsXML+"\n====");    

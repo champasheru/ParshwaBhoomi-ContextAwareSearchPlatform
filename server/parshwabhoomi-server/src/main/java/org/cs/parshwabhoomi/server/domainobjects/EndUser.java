@@ -4,14 +4,15 @@
 package org.cs.parshwabhoomi.server.domainobjects;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 
 /**
  * @author saurabh
  * git: champasheru saurabh.cse2@gmail.com
+ * DB tables: end_users, user_preferences
  *
  */
-public class EndUser extends DBEntity {
+public class EndUser extends PersistentEntity {
 	private UserCredential userCredential; 
 	private String name;
 	private Date dateOfBirth;
@@ -19,8 +20,8 @@ public class EndUser extends DBEntity {
     private ContactInfo contactInfo;
     private String educationInfo;
     private String workInfo;
-    //A map from BusinessCategoryName => Preferences String for this user.
-    private HashMap<String,String> userPrefs;
+    //A map from BusinessCategoryEnum => Preferences String for this user.
+    private EnumMap<BusinessCategory,String> userPrefs;
     
     /**
 	 * @return the userCredential
@@ -123,14 +124,15 @@ public class EndUser extends DBEntity {
 	/**
 	 * @return the userPrefs
 	 */
-	public HashMap<String, String> getUserPrefs() {
+	public EnumMap<BusinessCategory, String> getUserPrefs() {
 		return userPrefs;
 	}
 
 	/**
 	 * @param userPrefs the userPrefs to set
 	 */
-	public void setUserPrefs(HashMap<String, String> userPrefs) {
+	public void setUserPrefs(EnumMap<BusinessCategory, String> userPrefs) {
 		this.userPrefs = userPrefs;
 	}
+
 }

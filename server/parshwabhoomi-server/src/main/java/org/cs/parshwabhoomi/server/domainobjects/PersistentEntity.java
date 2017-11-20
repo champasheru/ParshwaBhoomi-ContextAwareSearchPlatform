@@ -8,7 +8,7 @@ package org.cs.parshwabhoomi.server.domainobjects;
  * git: champasheru saurabh.cse2@gmail.com
  *
  */
-public abstract class DBEntity {
+public abstract class PersistentEntity {
 	private long id;
 
 	/**

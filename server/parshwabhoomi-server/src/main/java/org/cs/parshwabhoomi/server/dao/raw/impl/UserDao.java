@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.dao.AbstractRawDao;
-import org.cs.parshwabhoomi.server.dao.raw.UserDAO;
+import org.cs.parshwabhoomi.server.dao.raw.IUserDao;
 
 
 /**
@@ -19,7 +19,7 @@ import org.cs.parshwabhoomi.server.dao.raw.UserDAO;
  * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
-public class UserDAOImpl extends AbstractRawDao implements UserDAO {
+public class UserDao extends AbstractRawDao implements IUserDao {
 	
 	//Checks whether the user with given username & password exists.
     public boolean isValidUser(String username,String password){

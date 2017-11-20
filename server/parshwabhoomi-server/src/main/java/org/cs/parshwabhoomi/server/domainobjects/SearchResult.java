@@ -8,6 +8,12 @@ package org.cs.parshwabhoomi.server.domainobjects;
 /**
  *
  * @author saurabh
+ * This class encapsulates the complete search result information retrieved from DB for a given user
+ * query by matching it against the user context info and history persisted in DB.
+ * There will be a one instance of this class per search result computed by the search aggregator(and it's
+ * not necessary that the result is computed from the platform DB only, it can be fetched from a remote
+ * service like Google Custom Search Engine.
+ * Note: this is a computed entity i.e. there's no equivalent DB table for this one.  
  */
 public class SearchResult {
 	public enum Provider{
@@ -15,28 +21,28 @@ public class SearchResult {
 		SEARCH_PROVIDER_GOOGLE
 	}
 	
-	public enum SearchResultType{
+	public enum Type{
 		//Result served by Parshwabhoomi platform based on user preferences and matching corresponding business entities in the given locality/geo-fence.   
-		TYPE_PREFERRED,
+		TYPE_PB_PREFERRED,
 		//Result served by Parshwabhoomi platform that matches the search term against registering business entities in the given locality/geo-fence but w/o
 		//the user preferences.
-		TYPE_LOCATION,
+		TYPE_PB_LOCATION,
 		//Result served by Parshwabhoomi platform that matches the search term against all the registered business entities w/o considering locality/geo-fence &
 		//the user preferences.
-		TYPE_GENERAL,
+		TYPE_PB_GENERAL,
 		//Result served by Search Engine based on user preferences and matching corresponding business entities in the given locality/geo-fence.
-		//The query is equivalent to one used for TYPE_PREFERRED but served by search engine like Google.
+		//The query is equivalent to one used for TYPE_PB_PREFERRED but served by search engine like Google.
 		TYPE_SEARCH_ENGINE_PREFERRED,
 		//Result served by Search Engine that matches the search term against business entities in the given locality/geo-fence but w/o
-		//the user preferences. The query is equivalent to one used for TYPE_LOCATION but served by search engine like Google.
+		//the user preferences. The query is equivalent to one used for TYPE_PB_LOCATION but served by search engine like Google.
 		TYPE_SEARCH_ENGINE_LOCATION,
 		//Result served by Search Engine that matches the search term against all the business entities w/o considering locality/geo-fence &
-		//the user preferences. The query is equivalent to one used for TYPE_GENERAL but served by search engine like Google.
+		//the user preferences. The query is equivalent to one used for TYPE_PB_GENERAL but served by search engine like Google.
 		TYPE_SEARCH_ENGINE_GENERAL
 	}
 	
     //The result type would be one of the 6 types above.
-    private SearchResultType type;
+    private Type type;
     //The provider of the search results e.g. parshwabhoomi, google etc.
     private Provider provider;
     
@@ -49,19 +55,25 @@ public class SearchResult {
     private String formattedUrl;
     private String htmlFormattedUrl;
     private String imageUrl;
+    /**
+     * The business category/classfication name under which the local vendor falls.
+     * This is applicable only when the search result type is PB: preferred, location, and general. 
+     */
+    
+    private String category;
     
     private Address address;
     private ContactInfo contactInfo;
 	/**
 	 * @return the type
 	 */
-	public SearchResultType getType() {
+	public Type getType() {
 		return type;
 	}
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(SearchResultType type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 	/**
@@ -207,5 +219,17 @@ public class SearchResult {
 	 */
 	public void setContactInfo(ContactInfo contactInfo) {
 		this.contactInfo = contactInfo;
+	}
+	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }

@@ -14,24 +14,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
 import org.cs.parshwabhoomi.server.dao.DBManager;
 import org.cs.parshwabhoomi.server.dataparser.SearchResponseParser;
 import org.cs.parshwabhoomi.server.dataparser.XMLSerializer;
-import org.cs.parshwabhoomi.server.domainobjects.PBSearchResult;
 import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
-import org.cs.parshwabhoomi.server.domainobjects.SearchServiceResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchResult.Type;
 import org.cs.parshwabhoomi.server.dto.adapter.GoogleGeocodedAddressResponseDTOAdapter;
-import org.cs.parshwabhoomi.server.dto.impl.SearchResultResponseDTO;
 
 /**
  *
  * @author saurabh
  */
-public class SearchService {
+public class DefaultSearchService {
     //search vendor like Google/Yahoo/Bing etc.
     private String vendor;
     
@@ -39,7 +35,7 @@ public class SearchService {
     private static final String GOOGLE_MAPS_GEOCODING_API_BASE_URI="https://maps.googleapis.com/maps/api/geocode/json?";
     
     
-    public SearchService(String webSearchVendor){
+    public DefaultSearchService(String webSearchVendor){
         this.vendor=webSearchVendor;   
     }
 
@@ -60,16 +56,16 @@ public class SearchService {
         if(latitude!=null && longitude!=null){
             String temp=getReverseGeocodedAddressFrom(latitude,longitude);
             if(temp!=null){
-                System.out.println("[SearchService] address @ Reverse- geocoding= "+temp);
+                System.out.println("[DefaultSearchService] address @ Reverse- geocoding= "+temp);
                 address=temp;
             }
         }
         
-        System.out.println("\n[SearchService] The Original search query : "+query);
+        System.out.println("\n[DefaultSearchService] The Original search query : "+query);
         
-        //BusinessEntity results
+        //BusinessVendor results
         ArrayList<SearchResult> searchResults=new ArrayList<SearchResult>();
-        ArrayList<PBSearchResult> pBSearchResults=null;
+        ArrayList<SearchResult> pBSearchResults=null;
         
         //Find the local vendors pertaining to the user's location.
         DBManager dbManager= DBManager.getDBManager();
@@ -87,9 +83,10 @@ public class SearchService {
         }
         
         
+        //TODO: shall have more classifiers: TYPE_PB_LOCATION and/or TYPE_PB_GENERAL
         if(pBSearchResults!=null && pBSearchResults.size()>0){
             for(int i=0;i<pBSearchResults.size();i++){
-                pBSearchResults.get(i).setType(SearchResult.RESULT_VENDOR);
+                pBSearchResults.get(i).setType(Type.TYPE_PB_PREFERRED);
             }
             searchResults.addAll(pBSearchResults);
         }
@@ -103,13 +100,13 @@ public class SearchService {
                 String aUserSpecificSearchQuery=userSpecificSearchQueries.get(i)+" "+address;
                 System.out.println("_The UserCredential specific search query "+i+": "+aUserSpecificSearchQuery);
                 
-                ArrayList<SearchServiceResult> searchServiceResults = getSearchResultsWithGoogleCustomSearch(aUserSpecificSearchQuery);
+                ArrayList<SearchResult> searchServiceResults = getSearchResultsWithGoogleCustomSearch(aUserSpecificSearchQuery);
                 if (searchServiceResults != null && searchServiceResults.size() > 0) {
                     for(int j=0;j<searchServiceResults.size();j++){
-                        searchServiceResults.get(j).setType(SearchResult.RESULT_USERPREF_LOCATION);
+                        searchServiceResults.get(j).setType(Type.TYPE_SEARCH_ENGINE_PREFERRED);
                     }
                     searchResults.addAll(searchServiceResults);
-                    System.out.println("[SearchService] UserCredential specific query result count "+i+": "+searchServiceResults.size());
+                    System.out.println("[DefaultSearchService] UserCredential specific query result count "+i+": "+searchServiceResults.size());
                 }
             }
         }
@@ -117,29 +114,29 @@ public class SearchService {
         
         //Query + location; No user prefs
         String modifiedQuery=query+" "+address;
-        System.out.println("[SearchService] Modified query for location: "+modifiedQuery);
+        System.out.println("[DefaultSearchService] Modified query for location: "+modifiedQuery);
         
         //Then get the search results for the original search query pertaining to this device location.
-        ArrayList<SearchServiceResult> searchServiceResults= getSearchResultsWithGoogleCustomSearch(modifiedQuery);
+        ArrayList<SearchResult> searchServiceResults= getSearchResultsWithGoogleCustomSearch(modifiedQuery);
         if(searchServiceResults!=null && searchServiceResults.size()>0){
             for(int i=0;i<searchServiceResults.size();i++){
-                searchServiceResults.get(i).setType(SearchResult.RESULT_LOCATION);
+                searchServiceResults.get(i).setType(Type.TYPE_SEARCH_ENGINE_LOCATION);
             }
             searchResults.addAll(searchServiceResults);
-            System.out.println("[SearchService] Location based query result count:"+searchServiceResults.size());
+            System.out.println("[DefaultSearchService] Location based query result count:"+searchServiceResults.size());
         }
         
         
         //Query results
         //Default search service results irrespective of location.
-        System.out.println("[SearchService] Getting the search result for the original query...");
+        System.out.println("[DefaultSearchService] Getting the search result for the original query...");
         searchServiceResults= getSearchResultsWithGoogleCustomSearch(query);
         if(searchServiceResults!=null && searchServiceResults.size()>0){
             for(int i=0;i<searchServiceResults.size();i++){
-                searchServiceResults.get(i).setType(SearchResult.RESULT_GENERAL);
+                searchServiceResults.get(i).setType(Type.TYPE_SEARCH_ENGINE_GENERAL);
             }
             searchResults.addAll(searchServiceResults);
-            System.out.println("[SearchService] Original query result count:"+searchServiceResults.size());
+            System.out.println("[DefaultSearchService] Original query result count:"+searchServiceResults.size());
         }
         
         
@@ -153,10 +150,10 @@ public class SearchService {
     }
     
     
-    public ArrayList<SearchServiceResult> getSearchResultsWithGoogleCustomSearch(String query) throws IOException{
+    public ArrayList<SearchResult> getSearchResultsWithGoogleCustomSearch(String query) throws IOException{
     	System.out.println("Using Google Custom Search API Service...\n");
         InputStream is=null;
-        ArrayList<SearchServiceResult> searchServiceResult=null;
+        ArrayList<SearchResult> searchServiceResult=null;
         try {
         	String temp=GOOGLE_CUSTOM_SEARCH_API_BASE_URI+
         				"key="+AppContext.getDefaultContext().getProperty(AppContext.GOOGLE_API_KEY)
@@ -180,7 +177,7 @@ public class SearchService {
             SearchResponseParser responseParser= new SearchResponseParser();
             searchServiceResult=responseParser.parseJsonV2(builder.toString());
         } catch (MalformedURLException ex) {
-            System.out.println("[SearchService] Google Invalid URL: \n");
+            System.out.println("[DefaultSearchService] Google Invalid URL: \n");
         }finally{
             if(is!=null)
                 is.close();
@@ -198,7 +195,7 @@ public class SearchService {
         	String temp=GOOGLE_MAPS_GEOCODING_API_BASE_URI+
         				"latlng="+latitude+","+longitude
         				+"&key="+AppContext.getDefaultContext().getProperty(AppContext.GOOGLE_API_KEY);
-            System.out.println("[SearchService] The geocoding URL= "+temp);
+            System.out.println("[DefaultSearchService] The geocoding URL= "+temp);
             URL tempURL = new URL(temp);
             HttpURLConnection conn=(HttpURLConnection)tempURL.openConnection();
             conn.connect();
@@ -218,7 +215,7 @@ public class SearchService {
             return GoogleGeocodedAddressResponseDTOAdapter.parseJsonForAddress(builder.toString());
             
         } catch (MalformedURLException ex) {
-            System.out.println("[SearchService] Invalid URL: \n");
+            System.out.println("[DefaultSearchService] Invalid URL: \n");
         } catch (IOException ioe) {
             ioe.printStackTrace(System.out);
         }finally{

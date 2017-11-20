@@ -15,7 +15,6 @@ import org.cs.parshwabhoomi.server.dao.DBManager;
  * @author saurabh
  */
 public class Config {
-    
     //Business categories list
     public static String CATEGORY_COMPUTERS="Computers,Electronics,Gadgets";
     public static String CATEGORY_AUTOMOBILES="Automobiles,Cars";

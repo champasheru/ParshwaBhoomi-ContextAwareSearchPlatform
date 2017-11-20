@@ -47,16 +47,6 @@ public class AppContext {
 		daoProvider = DaoProviderFactory.create(PB_DAO_IMPL_PACKAGE, connectionProps);
 	}
 	
-	public static AppContext newInstance(){
-		if(appContext == null){
-			appContext = new AppContext();
-		}
-		return appContext;
-	}
-	
-//	public static AppContext getDefaultContext(){
-//		return appContext;
-//	}
 	
 	public static AppContext getDefaultContext(){
 		if(appContext == null){

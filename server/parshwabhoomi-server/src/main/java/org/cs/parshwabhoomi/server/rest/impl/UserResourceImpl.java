@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
-import org.cs.parshwabhoomi.server.dao.raw.impl.UserDAOImpl;
+import org.cs.parshwabhoomi.server.dao.raw.impl.UserDao;
 import org.cs.parshwabhoomi.server.dto.impl.UserLoginRequestDTO;
 import org.cs.parshwabhoomi.server.rest.AbstractResource;
 import org.cs.parshwabhoomi.server.rest.UserResource;
@@ -30,9 +30,9 @@ public class UserResourceImpl extends AbstractResource implements UserResource {
 	@Override
 	public Response login(UserLoginRequestDTO loginRequestDTO) {
 		LogManager.getLogger().info("Validating UserCredential Login: "+loginRequestDTO.getUsername());
-		UserDAOImpl userDAOImpl = (UserDAOImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("UserDAOImpl");
-		boolean isValid = userDAOImpl.isValidUser(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
-		userDAOImpl.close();
+		UserDao userDao = (UserDao)AppContext.getDefaultContext().getDaoProvider().getDAO("UserDao");
+		boolean isValid = userDao.isValidUser(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
+		userDao.close();
 		Response response = isValid ? Response.ok().build() : Response.status(Status.UNAUTHORIZED).build();
 		return response;
 	}

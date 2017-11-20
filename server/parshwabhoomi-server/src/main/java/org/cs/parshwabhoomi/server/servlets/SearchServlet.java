@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cs.parshwabhoomi.server.core.SearchService;
+import org.cs.parshwabhoomi.server.core.DefaultSearchService;
 
 /**
  *
@@ -31,9 +31,9 @@ public class SearchServlet extends HttpServlet {
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            SearchService service=null;
+            DefaultSearchService service=null;
             try {
-                service=new SearchService("Google");
+                service=new DefaultSearchService("Google");
                 
                 //Retrieve the username & the search query.
                 String query=request.getParameter("query");

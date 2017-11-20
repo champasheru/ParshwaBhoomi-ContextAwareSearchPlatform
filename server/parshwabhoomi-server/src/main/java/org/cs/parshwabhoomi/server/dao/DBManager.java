@@ -7,14 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.cs.parshwabhoomi.server.domainobjects.Address;
 import org.cs.parshwabhoomi.server.domainobjects.BusinessCategory;
-import org.cs.parshwabhoomi.server.domainobjects.Config;
-import org.cs.parshwabhoomi.server.domainobjects.PBSearchResult;
+import org.cs.parshwabhoomi.server.domainobjects.BusinessVendor;
+import org.cs.parshwabhoomi.server.domainobjects.ContactInfo;
+import org.cs.parshwabhoomi.server.domainobjects.EndUser;
+import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchResult.Provider;
 import org.cs.parshwabhoomi.server.domainobjects.UserCredential;
-import org.cs.parshwabhoomi.server.domainobjects.BusinessEntity;
+import org.cs.parshwabhoomi.server.domainobjects.UserCredential.Role;
 
 //Implemented as a Singleton
 public class DBManager {
@@ -23,7 +28,6 @@ public class DBManager {
 
     private DBManager(){
         System.out.println("__Initializing the Database Manager...");
-        //connect("smartsearch", "root", "");
         connect("smartsearch", "pbadmin", "pbadmin123");
     }
 
@@ -34,7 +38,8 @@ public class DBManager {
         return dbManager;
     }
     
-    private void connect(String dbname, String username, String password) {
+    @SuppressWarnings("rawtypes")
+	private void connect(String dbname, String username, String password) {
         System.out.println("Loading MySQL JDBC driver...");
         try {
             Class jdbcDiverClass = Class.forName("com.mysql.jdbc.Driver");
@@ -75,7 +80,7 @@ public class DBManager {
     }
     
     
-    public ArrayList<PBSearchResult> getSearchResultsFor(String searchKeyword,String username,String routeLane,String sublocality,String locality) {
+    public ArrayList<SearchResult> getSearchResultsFor(String searchKeyword,String username,String routeLane,String sublocality,String locality) {
         String optionalClause="";
         
         if(routeLane!=null && sublocality!=null){
@@ -86,7 +91,7 @@ public class DBManager {
             optionalClause=optionalClause+"and sublocality like '%"+sublocality+"%'";
         }
         
-        String query = "SELECT name,category_name,route_or_lane,sublocality,locality,contact,advertisement_and_offerings "
+        String query = "SELECT name,category_name,route_or_lane,sublocality,locality,primary_mobile,advertisement_and_offerings "
                        +"FROM user_preferences,vendors,categories,users " 
                        +"WHERE preference like '%"+searchKeyword+"%' "
                        +"and username='"+username+"' "
@@ -99,7 +104,7 @@ public class DBManager {
             query+= " "
                     +optionalClause
                     + " UNION "
-                    + "SELECT name,category_name,route_or_lane,sublocality,locality,contact,advertisement_and_offerings "
+                    + "SELECT name,category_name,route_or_lane,sublocality,locality,primary_mobile,advertisement_and_offerings "
                     + "FROM user_preferences,vendors,categories,users "
                     + "WHERE preference like '%" + searchKeyword + "%' "
                     + "and username='" + username + "' "
@@ -111,7 +116,7 @@ public class DBManager {
                 
                        
         System.out.println("Custom Result for Vendors Query:\n"+query+"\n");
-        ArrayList<PBSearchResult> pBSearchResults = null;
+        ArrayList<SearchResult> pBSearchResults = null;
         
         Statement statement=null;
         ResultSet rs = null;
@@ -123,17 +128,22 @@ public class DBManager {
                 return null;
             } else {
                 System.out.println("__Custom search results found...");
-                pBSearchResults=new ArrayList<PBSearchResult>();
-                String address="";
+                pBSearchResults=new ArrayList<SearchResult>();
                 rs.beforeFirst();
                 while (rs.next()) {
-                    PBSearchResult csr= new PBSearchResult();
-                    csr.setUsername(rs.getString("name"));
+                	SearchResult csr= new SearchResult();
+                    csr.setTitle(rs.getString("name"));
                     csr.setCategory(rs.getString("category_name"));
-                    address=address+rs.getString("route_or_lane")+","+rs.getString("sublocality")+","+rs.getString("locality");
+                    Address address = new Address();
+                    address.setRouteOrLane(rs.getString("route_or_lane"));
+                    address.setSublocality(rs.getString("sublocality"));
+                    address.setLocality(rs.getString("locality"));
                     csr.setAddress(address);
-                    csr.setContact(rs.getInt("contact"));
-                    csr.setOfferings(rs.getString("advertisement_and_offerings"));
+                    ContactInfo contactInfo = new ContactInfo();
+                    contactInfo.setPrimaryMobile(rs.getString("primary_mobile"));
+                    csr.setContactInfo(contactInfo);
+                    csr.setSnippet(rs.getString("advertisement_and_offerings"));
+                    csr.setProvider(Provider.SEARCH_PROVIDER_PARSHWABHOOMI);
                     pBSearchResults.add(csr);
                 }
             }
@@ -147,8 +157,7 @@ public class DBManager {
         return pBSearchResults;
     }
     
-    //Change it to HashMap<String,Integer> whereby returning (category_id,category_name)
-    //pairs.
+    
     public HashMap<String,BusinessCategory> getCategories(){
         String query="SELECT id,category_name,category_description FROM categories";
         
@@ -165,11 +174,8 @@ public class DBManager {
                 categories=new HashMap<String, BusinessCategory>();
                 rs.beforeFirst();
                 while (rs.next()) {
-                    BusinessCategory category=new BusinessCategory();
-                    category.setId(rs.getInt("id"));
-                    category.setName(rs.getString("category_name"));
-                    category.setDescription(rs.getString("category_description"));
-                    categories.put(category.getName(), category);
+                	BusinessCategory category = BusinessCategory.valueOf(rs.getString("category_name"));
+                    categories.put(category.name(), category);
                 }
             }
         } catch (SQLException sqle) {
@@ -181,100 +187,71 @@ public class DBManager {
         return categories;
     }
     
-    public void addUser(UserCredential userCredential){
-        //First add the basic user info into the users table 
-        int userID=this.addUserInfo(userCredential);
-        if(userID>0){
-            this.addUserPreferences(userID,userCredential.getUserPrefs());
-        }
-    }
     
     //Adds the new user record
-    private int addUserInfo(UserCredential userCredential){
-        String query = "INSERT INTO users (username,password,address,contact_no,education,work) " + "VALUES (?,?,?,?,?,?)";
+    public long addUser(UserCredential userCredential){
+        String query = "INSERT INTO users (username,password,role) " + "VALUES (?,?,?)";
         String userIDQuery="SELECT id from users WHERE username='"+userCredential.getUsername()+"'";
         
         PreparedStatement statement = null;
-        int status = 0;
+        
+        long userID = -1;
+        ResultSet rs = null;
         try {
             statement = connection.prepareStatement(query);
             statement.setString(1, userCredential.getUsername());
             statement.setString(2, userCredential.getPassword());
-            statement.setString(3, userCredential.getAddress());
-            statement.setInt(4, userCredential.getContactNo());
-            statement.setString(5, userCredential.getEducationInfo());
-            statement.setString(6, userCredential.getWorkInfo());
-
-            status = statement.executeUpdate();
+            statement.setString(3, userCredential.getRole().name());
+            
+            int status = statement.executeUpdate();
             if (status > 0) {
                 System.out.println("__The UserCredential added successfully!");
-                ResultSet rs=connection.createStatement().executeQuery(userIDQuery);
+                rs = connection.createStatement().executeQuery(userIDQuery);
                 if(rs.next()){
-                    return rs.getInt("id");
-                }else{
-                    return 0;
+                    userID = rs.getInt("id");
                 }
             }
         } catch (SQLException sqle) {
             System.out.println("Error:Adding user info " + sqle);
         } finally {
-            
+        	try {
+        		if(rs != null){
+        			rs.close();
+        		}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
-        return status;
+        
+        return userID;
     }
 
     
-    private void addUserPreferences(int userID,HashMap<String,String> userPrefs){
+    private void addUserPreferences(EndUser endUser){
         String query = "INSERT INTO user_preferences (user_id,category_id,preference) " + "VALUES (?,?,?)";
 
-        System.out.println("__Adding the user preferences...");
+        System.out.println("__Adding the user preferences for user: "+endUser.getUserCredential().getUsername());
         PreparedStatement statement = null;
-        //Statement lastInsertIDStmt=null;
+        
         int status = 0;
         try {
-            //1st get the user_id which is the auto-increment id foreign key from the users table
-            //lastInsertIDStmt=connection.createStatement();
-            //ResultSet rs=lastInsertIDStmt.executeQuery("SELECT LAST_INSERT_ID()");
-            //int userID=-1;
-            //if(rs.next()){
-            //    userID=rs.getInt(1);
-            //    System.out.println("user_id= "+userID);
-            //}
-            System.out.println("user_id received= "+userID);
+            System.out.println("user_id received= "+endUser.getUserCredential().getId());
             statement = connection.prepareStatement(query);
-            statement.setInt(1, userID);
+            statement.setLong(1, endUser.getUserCredential().getId());
             
-            Iterator<BusinessCategory> categories=Config.getCategories().iterator();
-            //Add the user preferences for all the categories in the user_preferences table.
-            //A typical row in user_preferences table wd be- (id,user_id,category_id,preference)
-            while(categories.hasNext()){
-                BusinessCategory category=categories.next();
-                String pref=userPrefs.get(category.getName());
+            for(Iterator<BusinessCategory> iterator = endUser.getUserPrefs().keySet().iterator(); iterator.hasNext(); ){
+            	BusinessCategory category = iterator.next();
+            	String pref = endUser.getUserPrefs().get(category);
                 if(pref!=null && !pref.trim().equals("")){
-                    String[] temp=pref.split(",");
-
-                    //If the num of preferences are greater than  1
-                    if(temp.length>0){
-                        for(int i=0;i<temp.length;i++){
-                            if(!temp[i].trim().equals("")){
-                                statement.setInt(2, category.getId());
-                                statement.setString(3, temp[i]);
-                                status = statement.executeUpdate();
-                            }                           
-                        }
-                        if (status > 0) {
-                            System.out.println("__The MULTIPLE UserCredential Preference added successfully for category: "+category.getName());
-                        }
-                    }else{//If only single pref is available,then add it directly.
-                        statement.setInt(2, category.getId());
-                        statement.setString(3, pref);
-                        status = statement.executeUpdate();
-                        if (status > 0) {
-                            System.out.println("__The SINGLE UserCredential Preference added successfully!");
-                        }
+                	statement.setLong(2, category.getId());
+                    statement.setString(3, pref.trim());
+                    status = statement.executeUpdate();
+                    if (status > 0) {
+                    	System.out.println("__The MULTIPLE UserCredential Preference added successfully for category: "+category.name());
                     }
                }//end of if the pref for category has some valid value
-            }//end of while
+            }
         } catch (SQLException sqle) {
             System.out.println("__Error:Adding user preference " + sqle);
         } finally {
@@ -283,25 +260,25 @@ public class DBManager {
     }
     
     
-    public int addVendor(BusinessEntity businessEntity){
-        String query = "INSERT INTO vendors (category_id,name,route_or_lane,sublocality,locality,contact,advertisement_and_offerings) " +
+    public int addVendor(BusinessVendor businessVendor){
+        String query = "INSERT INTO vendors (category_id,name,route_or_lane,sublocality,locality,primary_mobile,advertisement_and_offerings) " +
                 " VALUES (?,?,?,?,?,?,?)";
         PreparedStatement statement = null;
         int status = 0;
         try {
             statement = connection.prepareStatement(query);
-
-            statement.setInt(1, Config.getValue(businessEntity.getBusinessCategory()).getId());
-            statement.setString(2, businessEntity.getVendorName());
-            statement.setString(3, businessEntity.getRootOrLane());
-            statement.setString(4, businessEntity.getSublocality());
-            statement.setString(5, businessEntity.getLocality());
-            statement.setInt(6, businessEntity.getContactNo());
-            statement.setString(7, businessEntity.getOfferings());
+            
+            statement.setLong(1, businessVendor.getBusinessCategory().getId());
+            statement.setString(2, businessVendor.getName());
+            statement.setString(3, businessVendor.getAddress().getRouteOrLane());
+            statement.setString(4, businessVendor.getAddress().getSublocality());
+            statement.setString(5, businessVendor.getAddress().getLocality());
+            statement.setString(6, businessVendor.getContactInfo().getPrimaryMobile());
+            statement.setString(7, businessVendor.getOfferings());
 
             status = statement.executeUpdate();
             if (status > 0) {
-                System.out.println("__The BusinessEntity added successfully!");
+                System.out.println("__The BusinessVendor added successfully!");
             }
         } catch (SQLException sqle) {
             System.out.println("__Error:Adding vendor info" + sqle);
@@ -385,9 +362,11 @@ public class DBManager {
     }
 
 
-    public UserCredential getUserProfile(String username){
-        String userBasicInfoQuery = "SELECT id,address,contact_no,education,work "
-                       +"FROM users "
+    //TODO: needs DB schema update to include address and contact info fields.
+    //Same method may also be desirable but with user ID.
+    public EndUser getEndUserDetailedProfile(String username){
+        String userBasicInfoQuery = "SELECT id as user_creds_id, role, end_users.*"
+                       +"FROM user_creds inner join end_users on user_creds.id = end_users.user_id "
                        +"WHERE username='"+username+"' ";
 
         String userPrefsInfoQuery = "SELECT category_name,preference "
@@ -402,46 +381,79 @@ public class DBManager {
         ResultSet rs = null;
         ResultSet resultSet=null;
         UserCredential userCredential=null;
+        EndUser endUser = null;
         try {
             statement=connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             userPrefsStmt=connection.prepareStatement(userPrefsInfoQuery);
 
             rs=statement.executeQuery(userBasicInfoQuery);
             if (rs.next()) {
-                int userID=rs.getInt("id");
-                userPrefsStmt.setInt(1, userID);
+            	endUser = new EndUser();
+            	
+                long userID = rs.getLong("id");
                 userCredential=new UserCredential();
-                userCredential.setAddress(rs.getString("address"));
-                userCredential.setContactNo(rs.getInt("contact_no"));
-                userCredential.setEducationInfo(rs.getString("education"));
-                userCredential.setWork(rs.getString("work"));
-
-                resultSet=userPrefsStmt.executeQuery();
-                HashMap<String,String> userPrefs=new HashMap<String,String>();
-                Iterator<BusinessCategory> categories=Config.getCategories().iterator();
-                while(categories.hasNext()){
-                    userPrefs.put(categories.next().getName(), "");
-                }
+                userCredential.setId(userID);
+                userCredential.setRole(Role.valueOf(rs.getString("role")));
+                endUser.setUserCredential(userCredential);
+                
+                Address address = new Address();
+                address.setLatitude(rs.getString("latitude"));
+                address.setLongitude(rs.getString("longitude"));
+                address.setRouteOrLane(rs.getString("route_or_lane"));
+                address.setSublocality(rs.getString("sublocality"));
+                address.setLocality(rs.getString("locality"));
+                address.setState(rs.getString("state"));
+                address.setPincode(rs.getString("pincode"));
+                endUser.setAddress(address);
+                
+                ContactInfo contactInfo = new ContactInfo();
+                contactInfo.setEmail(rs.getString("email"));
+                contactInfo.setLandline(rs.getString("landline"));
+                contactInfo.setPrimaryMobile(rs.getString("primaryMobile"));
+                contactInfo.setSecondaryMobile(rs.getString("secondaryMobile"));
+                endUser.setContactInfo(contactInfo);
+                
+                userPrefsStmt.setLong(1, userID);
+                resultSet = userPrefsStmt.executeQuery();
+                EnumMap<BusinessCategory,String> userPrefs = new EnumMap<>(BusinessCategory.class);
                 while(resultSet.next()){
-                    String categoryName=resultSet.getString("category_name");
+                    String categoryName = resultSet.getString("category_name");
+                    BusinessCategory businessCategory = BusinessCategory.valueOf(categoryName);
                     String preference=resultSet.getString("preference");
                     System.out.println("_Pref for category= "+categoryName+" preference= "+preference);
-                    userPrefs.put(categoryName, userPrefs.get(categoryName)+preference+",");
+                    userPrefs.put(businessCategory, preference);
                 }
-                userCredential.setUserPrefs(userPrefs);
+                endUser.setUserPrefs(userPrefs);
             }
         } catch (SQLException sqle) {
             System.out.println("__Error:retrieving user profile"+ sqle);
         } finally {
+        	if(rs != null){
+        		try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        	if(resultSet != null){
+        		try {
+        			resultSet.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
             rs = null;
             resultSet=null;
         }
-        return userCredential;
+        
+        return endUser;
     }
 
-    public void updateUserProfile(UserCredential userCredential){
-        int userID=this.updateUserInfo(userCredential);
-        if(userID>0){
+    public void updateUserProfile(EndUser endUser){
+        int userID = this.updateUserInfo(endUser);
+        if(userID > 0){
             String query = "DELETE FROM user_preferences WHERE user_id='"+userID+"'";
             
             Statement statement = null;
@@ -451,46 +463,66 @@ public class DBManager {
                 status=statement.executeUpdate(query);
                 if (status > 0) {
                     System.out.println("__All the previous UserCredential Preferences deleted successfully...");
-                    this.addUserPreferences(userID,userCredential.getUserPrefs());
+                    this.addUserPreferences(endUser);
                 }
             } catch (SQLException sqle) {
                 System.out.println("__Error:Updating the USER PREFS info" + sqle);
             } finally {
+            	if(statement != null){
+            		try {
+						statement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            	}
             }
         }
     }
 
     //Updates the existing user record & also returns the user id of the record from the users table of the db.
-    private int updateUserInfo(UserCredential userCredential){
-        String query = "UPDATE users SET address=?,contact_no=?,education=?,work=? "
-                       +"WHERE username=?";
+    private int updateUserInfo(EndUser endUser){
+        String query = "UPDATE end_users SET route_or_lane=?, sublocality=?, locality=?, state=?, pincode=?, latitude=?, longitude=?, "
+        				+ "primaryMobile=?, secondaryMobile=?, landline=?, email=?, education=?, work=? "
+                        +"WHERE user_id=?";
 
-        String userIDQuery="SELECT id from users WHERE username='"+userCredential.getUsername()+"'";
         PreparedStatement statement = null;
         int status = 0;
         try {
             statement = connection.prepareStatement(query);
-            statement.setString(1, userCredential.getAddress());
-            statement.setInt(2, userCredential.getContactNo());
-            statement.setString(3, userCredential.getEducationInfo());
-            statement.setString(4, userCredential.getWorkInfo());
-            statement.setString(5, userCredential.getUsername());
+            
+            statement.setString(1, endUser.getAddress().getRouteOrLane());
+            statement.setString(2, endUser.getAddress().getSublocality());
+            statement.setString(3, endUser.getAddress().getLocality());
+            statement.setString(4, endUser.getAddress().getState());
+            statement.setString(5, endUser.getAddress().getPincode());
+            statement.setString(6, endUser.getAddress().getLatitude());
+            statement.setString(7, endUser.getAddress().getLongitude());
+            statement.setString(8, endUser.getContactInfo().getPrimaryMobile());
+            statement.setString(9, endUser.getContactInfo().getSecondaryMobile());
+            statement.setString(10, endUser.getContactInfo().getLandline());
+            statement.setString(10, endUser.getContactInfo().getEmail());
+            statement.setString(11, endUser.getEducationInfo());
+            statement.setString(12, endUser.getWorkInfo());
+            statement.setLong(13, endUser.getUserCredential().getId());
             
             status = statement.executeUpdate();
             if (status > 0) {
                 System.out.println("__The UserCredential Basic Info updated successfully!");
-                ResultSet rs=connection.createStatement().executeQuery(userIDQuery);
-                if(rs.next()){
-                    return rs.getInt("id");
-                }else{
-                    return 0;
-                }
             }
         } catch (SQLException sqle) {
             System.out.println("__Error:Updating the Basic UserCredential info" + sqle);
         } finally {
-
+        	if(statement != null){
+        		try {
+					statement.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
         }
+        
         return status;
     }
     

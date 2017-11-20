@@ -10,6 +10,6 @@ package org.cs.parshwabhoomi.server.dao.raw;
  * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
-public interface UserDAO {
+public interface IUserDao {
 
 }

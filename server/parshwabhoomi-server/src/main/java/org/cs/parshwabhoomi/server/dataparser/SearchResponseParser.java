@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.cs.parshwabhoomi.server.domainobjects.SearchServiceResult;
+import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,18 +29,19 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SearchResponseParser extends DefaultHandler {
 
-    private ArrayList<SearchServiceResult> resultList=null;
-    private SearchServiceResult tempResult;
-    private int index=0;
+    private ArrayList<SearchResult> resultList;
+    private SearchResult tempResult;
+    private int index = 0;
     private String temp;
     
     public SearchResponseParser(){
         
     }
 
-    public ArrayList<SearchServiceResult> parseResponse(InputStream is){
+    public ArrayList<SearchResult> parseResponse(InputStream is){
+    	SAXParser parser = null;
         try {
-            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+            parser = SAXParserFactory.newInstance().newSAXParser();
             System.out.println("Is namespace aware= "+parser.isNamespaceAware()+"\n");
             //Now parse the result
             //The SearchResultHandler will parse the XML,create the relevant
@@ -52,18 +53,14 @@ public class SearchResponseParser extends DefaultHandler {
             ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
-        }finally{
-            if(resultList!=null){
-                return resultList;
-            }else{
-                return null;
-            }
         }
+        
+        return resultList;
     }
     
     public void startDocument() throws SAXException{
         System.out.println("The SAXParser has STARTED parsing the document");
-        resultList=new ArrayList<SearchServiceResult>();
+        resultList=new ArrayList<SearchResult>();
     }
 
     public void endDocument()throws SAXException{
@@ -75,7 +72,7 @@ public class SearchResponseParser extends DefaultHandler {
         if(qName.equalsIgnoreCase("result")){
             //if the xml node with the name "Result" is found,create the
             //new SearchResult domain object
-            tempResult=new SearchServiceResult();
+            tempResult=new SearchResult();
         }
     }
 
@@ -88,9 +85,9 @@ public class SearchResponseParser extends DefaultHandler {
         }else if(qName.equalsIgnoreCase("title")){
             tempResult.setTitle(temp);
         }else if(qName.toLowerCase().contains("clickurl")){
-            tempResult.setUrl(temp);
+            tempResult.setLink(temp);
         }else if(qName.equalsIgnoreCase("abstract")){
-            tempResult.setSummary(temp);
+            tempResult.setSnippet(temp);
         }//Yahoo V1 search service used to have summary element in it's response,replaced in V2 with abstract.
         /*else if(qName.equalsIgnoreCase("summary")){ 
          tempResult.setSummary(temp);
@@ -107,7 +104,7 @@ public class SearchResponseParser extends DefaultHandler {
     
     
     /*** V2 ***/
-    public ArrayList<SearchServiceResult> parseJsonV2(String jsonString){
+    public ArrayList<SearchResult> parseJsonV2(String jsonString){
     	System.out.println("[SearchResponseParser] Parsing JSON response from Google Custome Search Engine API...");
         resultList=null;
         try {
@@ -115,16 +112,16 @@ public class SearchResponseParser extends DefaultHandler {
             JSONArray results= jsonObject.getJSONArray("items");
             
             if(results.length()>0){
-                resultList=new ArrayList<SearchServiceResult>();
+                resultList=new ArrayList<SearchResult>();
             }
             
             for(int i=0;i<results.length();i++){
                 JSONObject searchResult= results.getJSONObject(0);
                 
-                tempResult=new SearchServiceResult();
+                tempResult=new SearchResult();
                 tempResult.setTitle(searchResult.getString("title"));
-                tempResult.setSummary(searchResult.getString("snippet"));
-                tempResult.setUrl(searchResult.getString("link"));
+                tempResult.setSnippet(searchResult.getString("snippet"));
+                tempResult.setLink(searchResult.getString("link"));
                 
                 resultList.add(tempResult);
             }

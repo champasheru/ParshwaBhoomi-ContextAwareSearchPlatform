@@ -8,8 +8,9 @@ package org.cs.parshwabhoomi.server.domainobjects;
 /**
  *
  * @author saurabh
+ * DB table: business_vendors
  */
-public class BusinessEntity extends DBEntity{
+public class BusinessVendor extends PersistentEntity{
 	private UserCredential userCredential;
     private String name;
     private BusinessCategory businessCategory;
@@ -20,7 +21,7 @@ public class BusinessEntity extends DBEntity{
     private ContactInfo contactInfo;
     
 
-    public BusinessEntity(){
+    public BusinessVendor(){
         
     }
 

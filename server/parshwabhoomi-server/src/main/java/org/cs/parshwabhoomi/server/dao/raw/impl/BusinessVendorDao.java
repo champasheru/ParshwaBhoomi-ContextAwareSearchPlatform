@@ -6,13 +6,13 @@
 package org.cs.parshwabhoomi.server.dao.raw.impl;
 
 import org.cs.parshwabhoomi.server.dao.AbstractRawDao;
-import org.cs.parshwabhoomi.server.dao.raw.VendorDAO;
+import org.cs.parshwabhoomi.server.dao.raw.IBusinessVendorDao;
 
 /**
  * @author saurabh
  * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
  *
  */
-public class VendorDAOImpl extends AbstractRawDao implements VendorDAO {
+public class BusinessVendorDao extends AbstractRawDao implements IBusinessVendorDao {
 
 }

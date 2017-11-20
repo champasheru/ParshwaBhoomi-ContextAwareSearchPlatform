@@ -8,8 +8,9 @@ package org.cs.parshwabhoomi.server.domainobjects;
 /**
  *
  * @author saurabh
+ * DB table: user_creds
  */
-public class UserCredential extends DBEntity{
+public class UserCredential extends PersistentEntity{
 	public enum Role{
 		END_USER,
 		BUSINESS_ENTITY
@@ -17,7 +18,7 @@ public class UserCredential extends DBEntity{
 	
     private String username;
     private String password;
-    //EndUser or BusinessEntity
+    //EndUser or BusinessVendor
     private Role role;
     
 

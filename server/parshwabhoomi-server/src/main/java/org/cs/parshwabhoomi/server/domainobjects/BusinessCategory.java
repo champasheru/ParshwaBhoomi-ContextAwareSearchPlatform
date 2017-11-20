@@ -8,35 +8,49 @@ package org.cs.parshwabhoomi.server.domainobjects;
 /**
  *
  * @author saurabh
+ * DB table: categories
  */
-public class BusinessCategory extends DBEntity{
-    private String name;
-    private String description;
-    
-    public BusinessCategory(){
-        
-    }
+public enum BusinessCategory{
+	TYPE_COMPUTER_ELECTRONICS_GADGETS(1, "Computers,Electronics,Gadgets"),
+	TYPE_AUTOMOBILES(2, "Automobiles,Cars"),
+	TYPE_FOOD(3, "Food"),
+	TYPE_LIFESTYLE(4, "Lifestyle"),
+	TYPE_TRAVEL_LEISURE(5, "Travel,Leisure"),
+	TYPE_EDUCATION_ACADEMICS_TRAINING(6, "Education,Academics,Training");
+	
+	private long id;
+	private String description;
+	
+	private BusinessCategory(long id, String description){
+		this.description = description;
+	}
+	
 
-    public BusinessCategory(int id, String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-    
-    
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }
