@@ -7,6 +7,7 @@ package org.cs.parshwabhoomi.server.dataparser;
 
 import java.util.Collection;
 
+import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
 
 /**
@@ -27,11 +28,32 @@ public class XMLSerializer {
         serializedXML.append(xmlHeader+"\n");
         serializedXML.append("<resultset>\n");
         for(SearchResult sr:results){
-            //serializedXML.append(sr.getSearchResultXML());
+            serializedXML.append(getSingleSearchResultXML(sr));
         }
         serializedXML.append("</resultset>");
-        System.out.println("Done!!!");
+        LogManager.getLogger().info("Done! XML = "+serializedXML.toString());
         return serializedXML.toString();
+    }
+    
+    private static String getSingleSearchResultXML(SearchResult result){
+    	LogManager.getLogger().info("Serialising single result...");
+    	StringBuilder xml= new StringBuilder();
+    	xml.append("<result>\n");
+    	xml.append("<type>" + escapeXML(result.getType().name()) + "</type>\n");
+    	xml.append("<title>" + escapeXML(result.getTitle()) + "</title>\n");
+    	xml.append("<summary>" + escapeXML(result.getSnippet()) + "</summary>\n");
+    	//xml.append("<url>" + escapeXML(result.getLink()) + "</url>\n");
+    	xml.append("</result>\n");
+    	return xml.toString();
+    }
+    
+    
+    public static String escapeXML(String xml){
+    	String temp=xml.replaceAll("&", "&amp;");
+    	temp=temp.replaceAll("<", "&lt;");
+    	temp=temp.replaceAll(">", "&gt;");
+    	temp=temp.replaceAll("\"", "&quot;");
+    	return temp;
     }
       
 }

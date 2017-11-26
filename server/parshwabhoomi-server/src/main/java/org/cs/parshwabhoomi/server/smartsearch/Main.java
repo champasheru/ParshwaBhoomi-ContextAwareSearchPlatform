@@ -31,20 +31,17 @@ public class Main {
         List<SearchResultResponseDTO> dtos = googleSearchService.getResults("apple computers Computers Pulachi Wadi,Deccan Gymkhana,Pune");
         LogManager.getLogger().info("DTO list size from Google search results: "+dtos.size());
         
-//        DefaultSearchService service;
-//        AppContext.newInstance();
-//        try {
-//        	
-//            
-//            DBManager dbManager=DBManager.getDBManager();
-//            dbManager.getSearchResultsFor("apple","saurabh",null,null,"Pune");
-//            service=new DefaultSearchService("Google");
-//            System.out.println("\n********************************\n");
-//            String resultsXML=service.getSearchResultsXMLV2For("apple","saurabh","18.51657820","73.84310780");
-//            System.out.println("Main: Results ===\n"+resultsXML+"\n====");    
-//        } catch (IOException ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        DefaultSearchService service;
+        try {
+            DBManager dbManager=DBManager.getDBManager();
+            dbManager.getSearchResultsFor("apple","saurabh",null,null,"Pune");
+            service=new DefaultSearchService("Google");
+            System.out.println("\n********************************\n");
+            String resultsXML=service.getSearchResultsXMLV2For("apple","saurabh","18.51657820","73.84310780");
+            System.out.println("Main: Results ===\n"+resultsXML+"\n====");    
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

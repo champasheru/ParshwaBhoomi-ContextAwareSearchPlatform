@@ -11,12 +11,12 @@ package org.cs.parshwabhoomi.server.domainobjects;
  * DB table: categories
  */
 public enum BusinessCategory{
-	TYPE_COMPUTER_ELECTRONICS_GADGETS(1, "Computers,Electronics,Gadgets"),
-	TYPE_AUTOMOBILES(2, "Automobiles,Cars"),
+	TYPE_COMPUTER_ELECTRONICS_GADGETS(1, "Computers/Electronics/Gadgets"),
+	TYPE_AUTOMOBILES(2, "Automobiles/Cars"),
 	TYPE_FOOD(3, "Food"),
 	TYPE_LIFESTYLE(4, "Lifestyle"),
-	TYPE_TRAVEL_LEISURE(5, "Travel,Leisure"),
-	TYPE_EDUCATION_ACADEMICS_TRAINING(6, "Education,Academics,Training");
+	TYPE_TRAVEL_LEISURE(5, "Travel/Leisure"),
+	TYPE_EDUCATION_ACADEMICS_TRAINING(6, "Education/Academics/Training");
 	
 	private long id;
 	private String description;

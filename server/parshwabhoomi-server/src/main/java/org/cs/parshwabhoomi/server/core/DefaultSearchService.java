@@ -92,59 +92,59 @@ public class DefaultSearchService {
         }
         
         
-        //UserCredential prefs + location results
-        //Get the user prefs to build the user specific search query.
-        ArrayList<String> userSpecificSearchQueries=dbManager.getUserSpecificSearchQueryForSearchService(query,username);
-        if(userSpecificSearchQueries!=null && userSpecificSearchQueries.size()>0){
-            for(int i=0;i<userSpecificSearchQueries.size();i++){
-                String aUserSpecificSearchQuery=userSpecificSearchQueries.get(i)+" "+address;
-                System.out.println("_The UserCredential specific search query "+i+": "+aUserSpecificSearchQuery);
-                
-                ArrayList<SearchResult> searchServiceResults = getSearchResultsWithGoogleCustomSearch(aUserSpecificSearchQuery);
-                if (searchServiceResults != null && searchServiceResults.size() > 0) {
-                    for(int j=0;j<searchServiceResults.size();j++){
-                        searchServiceResults.get(j).setType(Type.TYPE_SEARCH_ENGINE_PREFERRED);
-                    }
-                    searchResults.addAll(searchServiceResults);
-                    System.out.println("[DefaultSearchService] UserCredential specific query result count "+i+": "+searchServiceResults.size());
-                }
-            }
-        }
-        
-        
-        //Query + location; No user prefs
-        String modifiedQuery=query+" "+address;
-        System.out.println("[DefaultSearchService] Modified query for location: "+modifiedQuery);
-        
-        //Then get the search results for the original search query pertaining to this device location.
-        ArrayList<SearchResult> searchServiceResults= getSearchResultsWithGoogleCustomSearch(modifiedQuery);
-        if(searchServiceResults!=null && searchServiceResults.size()>0){
-            for(int i=0;i<searchServiceResults.size();i++){
-                searchServiceResults.get(i).setType(Type.TYPE_SEARCH_ENGINE_LOCATION);
-            }
-            searchResults.addAll(searchServiceResults);
-            System.out.println("[DefaultSearchService] Location based query result count:"+searchServiceResults.size());
-        }
-        
-        
-        //Query results
-        //Default search service results irrespective of location.
-        System.out.println("[DefaultSearchService] Getting the search result for the original query...");
-        searchServiceResults= getSearchResultsWithGoogleCustomSearch(query);
-        if(searchServiceResults!=null && searchServiceResults.size()>0){
-            for(int i=0;i<searchServiceResults.size();i++){
-                searchServiceResults.get(i).setType(Type.TYPE_SEARCH_ENGINE_GENERAL);
-            }
-            searchResults.addAll(searchServiceResults);
-            System.out.println("[DefaultSearchService] Original query result count:"+searchServiceResults.size());
-        }
-        
-        
-        //So in the returned XML,the order of search results wd be-
-        //1.Vendor results
-        //2.User preference specific results from search service
-        //3.default search results for the search query submitted by the user in Pune.
-        //4.default search results for the search query submitted by the user in general(not specific to any location).
+//        //UserCredential prefs + location results
+//        //Get the user prefs to build the user specific search query.
+//        ArrayList<String> userSpecificSearchQueries=dbManager.getUserSpecificSearchQueryForSearchService(query,username);
+//        if(userSpecificSearchQueries!=null && userSpecificSearchQueries.size()>0){
+//            for(int i=0;i<userSpecificSearchQueries.size();i++){
+//                String aUserSpecificSearchQuery=userSpecificSearchQueries.get(i)+" "+address;
+//                System.out.println("_The UserCredential specific search query "+i+": "+aUserSpecificSearchQuery);
+//                
+//                ArrayList<SearchResult> searchServiceResults = getSearchResultsWithGoogleCustomSearch(aUserSpecificSearchQuery);
+//                if (searchServiceResults != null && searchServiceResults.size() > 0) {
+//                    for(int j=0;j<searchServiceResults.size();j++){
+//                        searchServiceResults.get(j).setType(Type.TYPE_SEARCH_ENGINE_PREFERRED);
+//                    }
+//                    searchResults.addAll(searchServiceResults);
+//                    System.out.println("[DefaultSearchService] UserCredential specific query result count "+i+": "+searchServiceResults.size());
+//                }
+//            }
+//        }
+//        
+//        
+//        //Query + location; No user prefs
+//        String modifiedQuery=query+" "+address;
+//        System.out.println("[DefaultSearchService] Modified query for location: "+modifiedQuery);
+//        
+//        //Then get the search results for the original search query pertaining to this device location.
+//        ArrayList<SearchResult> searchServiceResults= getSearchResultsWithGoogleCustomSearch(modifiedQuery);
+//        if(searchServiceResults!=null && searchServiceResults.size()>0){
+//            for(int i=0;i<searchServiceResults.size();i++){
+//                searchServiceResults.get(i).setType(Type.TYPE_SEARCH_ENGINE_LOCATION);
+//            }
+//            searchResults.addAll(searchServiceResults);
+//            System.out.println("[DefaultSearchService] Location based query result count:"+searchServiceResults.size());
+//        }
+//        
+//        
+//        //Query results
+//        //Default search service results irrespective of location.
+//        System.out.println("[DefaultSearchService] Getting the search result for the original query...");
+//        searchServiceResults= getSearchResultsWithGoogleCustomSearch(query);
+//        if(searchServiceResults!=null && searchServiceResults.size()>0){
+//            for(int i=0;i<searchServiceResults.size();i++){
+//                searchServiceResults.get(i).setType(Type.TYPE_SEARCH_ENGINE_GENERAL);
+//            }
+//            searchResults.addAll(searchServiceResults);
+//            System.out.println("[DefaultSearchService] Original query result count:"+searchServiceResults.size());
+//        }
+//        
+//        
+//        //So in the returned XML,the order of search results wd be-
+//        //1.Vendor results
+//        //2.User preference specific results from search service
+//        //3.default search results for the search query submitted by the user in Pune.
+//        //4.default search results for the search query submitted by the user in general(not specific to any location).
                
         return XMLSerializer.serialize(searchResults);
     }
