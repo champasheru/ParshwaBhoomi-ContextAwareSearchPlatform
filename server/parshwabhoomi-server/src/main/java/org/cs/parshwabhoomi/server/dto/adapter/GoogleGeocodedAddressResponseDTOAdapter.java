@@ -4,8 +4,8 @@
  */
 package org.cs.parshwabhoomi.server.dto.adapter;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.cs.parshwabhoomi.server.model.Address;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,49 +16,50 @@ import org.json.JSONObject;
  */
 public class GoogleGeocodedAddressResponseDTOAdapter {
     
-    public static String parseJsonForAddress(String jsonString){
-        String address="";
+    public static Address parseJsonForAddress(String jsonString){
+    	Address address = null;
         try {
-            JSONObject jsonObject=new JSONObject(jsonString);
+            JSONObject jsonObject = new JSONObject(jsonString);
             if(!jsonObject.getString("status").equalsIgnoreCase("OK")){
-                return null;
+                return address;
             }
             
-            JSONArray results=jsonObject.getJSONArray("results");
+            JSONArray results = jsonObject.getJSONArray("results");
             if(results.length()==0){
-                return null;
+                return address;
             }
             
-            JSONObject address1=results.getJSONObject(1);
-            JSONArray addressComponents=address1.getJSONArray("address_components");
-            for(int i=0;i<addressComponents.length();i++){
-                JSONArray addressTypes=addressComponents.getJSONObject(i).getJSONArray("types");
-                for(int j=0;j<addressTypes.length();j++){
-                    if(addressTypes.getString(j).equalsIgnoreCase("neighborhood")){
-                        System.out.println("[GoogleGeocodedAddressResponseDTOAdapter] parseJsonForAddress: neighborhood= "+addressComponents.getJSONObject(i).getString("long_name"));
-                        address+=addressComponents.getJSONObject(i).getString("long_name")+",";
+            JSONObject address1 = results.getJSONObject(1);
+            address = new Address();
+            JSONArray addressComponents = address1.getJSONArray("address_components");
+            for(int i= 0; i < addressComponents.length(); i++){
+                JSONArray addressTypes = addressComponents.getJSONObject(i).getJSONArray("types");
+                for(int j = 0; j < addressTypes.length(); j++){
+                    if(addressTypes.getString(j).equalsIgnoreCase("premise")){
+                        LogManager.getLogger().info("premise = "+addressComponents.getJSONObject(i).getString("long_name"));
+                        address.setPremise(addressComponents.getJSONObject(i).getString("long_name"));
+                    }else if(addressTypes.getString(j).equalsIgnoreCase("route")){
+                        LogManager.getLogger().info("route = "+addressComponents.getJSONObject(i).getString("long_name"));
+                        address.setRouteOrLane(addressComponents.getJSONObject(i).getString("long_name"));
                     }else if(addressTypes.getString(j).equalsIgnoreCase("sublocality")){
-                        System.out.println("[GoogleGeocodedAddressResponseDTOAdapter] parseJsonForAddress: sublocality= "+addressComponents.getJSONObject(i).getString("long_name"));
-                        address=address+addressComponents.getJSONObject(i).getString("long_name")+",";
+                    	LogManager.getLogger().info("sublocality = "+addressComponents.getJSONObject(i).getString("long_name"));
+                    	if(address.getSublocality() != null){
+                    		address.setSublocality(address.getSublocality()+","+addressComponents.getJSONObject(i).getString("long_name"));
+                    	}else{
+                    		address.setSublocality(addressComponents.getJSONObject(i).getString("long_name"));
+                    	}
                     }else if(addressTypes.getString(j).equalsIgnoreCase("locality")){
-                        address=address+addressComponents.getJSONObject(i).getString("long_name");
-                        System.out.println("[GoogleGeocodedAddressResponseDTOAdapter] parseJsonForAddress: locality= "+addressComponents.getJSONObject(i).getString("long_name"));
+                    	LogManager.getLogger().info("locality = "+addressComponents.getJSONObject(i).getString("long_name"));
+                        address.setLocality(addressComponents.getJSONObject(i).getString("long_name"));
                     }
                 }
             }
-            System.out.println("[GoogleGeocodedAddressResponseDTOAdapter] parseJsonForAddress: address= "+address);
+            LogManager.getLogger().info("Address built from JSON = "+address);
         } catch (JSONException ex) {
-            Logger.getLogger(GoogleGeocodedAddressResponseDTOAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        	LogManager.getLogger().error("Couldn't parse address!", ex);
         }
                 
         return address;
     }
     
-    public static String escapeXML(String xml){
-        String temp=xml.replaceAll("&", "&amp;");
-        temp=temp.replaceAll("<", "&lt;");
-        temp=temp.replaceAll(">", "&gt;");
-        temp=temp.replaceAll("\"", "&quot;");
-        return temp;
-    }
 }

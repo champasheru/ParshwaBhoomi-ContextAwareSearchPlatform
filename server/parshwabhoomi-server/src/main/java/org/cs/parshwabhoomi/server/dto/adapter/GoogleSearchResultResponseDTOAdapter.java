@@ -13,8 +13,10 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 import org.apache.logging.log4j.LogManager;
-import org.cs.parshwabhoomi.server.dto.adapter.JsonEventMetadata.JsonValueType;
-import org.cs.parshwabhoomi.server.dto.impl.SearchResultResponseDTO;
+import org.cs.parshwabhoomi.server.dto.search.JsonEventMetadata;
+import org.cs.parshwabhoomi.server.dto.search.JsonEventMetadata.JsonValueType;
+import org.cs.parshwabhoomi.server.model.SearchResult;
+import org.cs.parshwabhoomi.server.model.SearchResult.Provider;
 
 /**
  * @author saurabh
@@ -25,8 +27,8 @@ public class GoogleSearchResultResponseDTOAdapter {
 	private Stack<JsonEventMetadata> stack = new Stack<>();
 	private boolean itemsConsumed = false;
 	
-	public List<SearchResultResponseDTO> buildResponse(InputStream inputStream){
-		List<SearchResultResponseDTO> dtos = new ArrayList<>();
+	public List<SearchResult> buildResponse(InputStream inputStream){
+		List<SearchResult> results = new ArrayList<>();
 		
 		JsonParser parser = Json.createParser(inputStream);
 		while(parser.hasNext()){
@@ -58,11 +60,11 @@ public class GoogleSearchResultResponseDTOAdapter {
 						metadata.setJsonValueType(JsonValueType.JSON_VALUE_TYPE_ARRAY);
 						if(metadata.getKey().equalsIgnoreCase("items")){
 							while(parser.hasNext() && !itemsConsumed){
-								SearchResultResponseDTO dto = parseSingleJsonObject(parser);
-								if(dto != null){
-									dtos.add(dto);
+								SearchResult searchResult = parseSingleJsonObject(parser);
+								if(searchResult != null){
+									results.add(searchResult);
 								}
-								LogManager.getLogger().info("Search results parsed so far: "+dtos.size());
+								LogManager.getLogger().info("Search results parsed so far: "+results.size());
 							}
 						}
 					}
@@ -106,16 +108,16 @@ public class GoogleSearchResultResponseDTOAdapter {
 			}
 		}
 		
-		LogManager.getLogger().info("Total search results parsed: "+dtos.size());
+		LogManager.getLogger().info("Total search results parsed: "+results.size());
 		
-		return dtos;
+		return results;
 	}
 	
 	
-	private SearchResultResponseDTO parseSingleJsonObject(JsonParser parser){
+	private SearchResult parseSingleJsonObject(JsonParser parser){
 		LogManager.getLogger().info("** Parsing single search result...");
 		
-		SearchResultResponseDTO dto = null;
+		SearchResult searchResult = null;
 		
 		boolean keepParsing = true;
 		
@@ -144,7 +146,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 					String top = stack.peek().getKey();
 					//Just to make sure that the keys from only the given enclosing objects are being parsed.
 					if(top.equalsIgnoreCase("items") || top.equalsIgnoreCase("cse_thumbnail") || top.equalsIgnoreCase("metatags") || top.equalsIgnoreCase("cse_image")){
-						populate(dto, parser, key);
+						populate(searchResult, parser, key);
 					}
 					break;
 					
@@ -159,7 +161,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 						LogManager.getLogger().info("Finished consuming all items...");
 						itemsConsumed = true;
 						stack.pop();
-						return dto;
+						return searchResult;
 					}
 					
 					stack.pop();
@@ -178,7 +180,8 @@ public class GoogleSearchResultResponseDTOAdapter {
 						
 						if(metadata.getKey().equalsIgnoreCase("items")){
 							LogManager.getLogger().info("Starting to process new Search Result Item object...");
-							dto = new SearchResultResponseDTO();
+							searchResult = new SearchResult();
+							searchResult.setProvider(Provider.SEARCH_PROVIDER_GOOGLE);
 						}
 					}else{
 						metadata.setJsonValueType(JsonValueType.JSON_VALUE_TYPE_OBJECT);
@@ -210,31 +213,31 @@ public class GoogleSearchResultResponseDTOAdapter {
 		}
 		
 		LogManager.getLogger().info("Finished parsing single search result **");
-		return dto;
+		return searchResult;
 	}
 	
 	
-	private void populate(SearchResultResponseDTO dto, JsonParser parser, String key){
+	private void populate(SearchResult searchResult, JsonParser parser, String key){
 		if(key.equalsIgnoreCase("title")){
-			dto.setTitle(parser.getString().trim());
+			searchResult.setTitle(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("htmlTitle")){
-			dto.setHtmlTitle(parser.getString().trim());
+			searchResult.setHtmlTitle(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("link")){
-			dto.setLink(parser.getString().trim());
+			searchResult.setLink(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("displayLink")){
-			dto.setDisplayLink(parser.getString().trim());
+			searchResult.setDisplayLink(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("snippet")){
-			dto.setSnippet(parser.getString().trim());
+			searchResult.setSnippet(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("htmlSnippet")){
-			dto.setHtmlSnippet(parser.getString().trim());
+			searchResult.setHtmlSnippet(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("formattedUrl")){
-			dto.setFormattedUrl(parser.getString().trim());
+			searchResult.setFormattedUrl(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("htmlFormattedUrl")){
-			dto.setHtmlFormattedUrl(parser.getString().trim());
+			searchResult.setHtmlFormattedUrl(parser.getString().trim());
 		}else if(key.equalsIgnoreCase("src") || key.equalsIgnoreCase("image") || key.equalsIgnoreCase("og:image")){
 			//these keys are found under objects: cse_thumbnail, metatags, cse_image respectively.
 			//if any of these has valid value then that's sufficient.
-			dto.setImageUrl(parser.getString().trim());
+			searchResult.setImageUrl(parser.getString().trim());
 		}
 	}
 }

@@ -1,0 +1,92 @@
+/**
+ * parshwabhoomi-server	29-Oct-2017:7:19:40 PM
+ * saurabh
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ */
+package org.cs.parshwabhoomi.server.dao.raw.impl;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.logging.log4j.LogManager;
+import org.cs.parshwabhoomi.server.dao.AbstractRawDao;
+import org.cs.parshwabhoomi.server.dao.raw.UserCredentialDao;
+import org.cs.parshwabhoomi.server.model.UserCredential;
+
+
+/**
+ * @author saurabh
+ * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ *
+ */
+public class UserCredentialDaoImpl extends AbstractRawDao implements UserCredentialDao {
+	
+	public long addUserCredential(UserCredential userCredential){
+        String query = "INSERT INTO user_creds (username,password,role) " + "VALUES (?,?,?)";
+        String userIDQuery="SELECT id from users WHERE username='"+userCredential.getUsername()+"'";
+        
+        PreparedStatement statement = null;
+        
+        long userID = -1;
+        ResultSet rs = null;
+        try {
+            statement = connection.prepareStatement(query);
+            statement.setString(1, userCredential.getUsername());
+            statement.setString(2, userCredential.getPassword());
+            statement.setString(3, userCredential.getRole().name());
+            
+            int status = statement.executeUpdate();
+            if (status > 0) {
+                System.out.println("__The UserCredential added successfully!");
+                rs = connection.createStatement().executeQuery(userIDQuery);
+                if(rs.next()){
+                    userID = rs.getInt("id");
+                }
+            }
+        } catch (SQLException sqle) {
+            System.out.println("Error:Adding user info " + sqle);
+        } finally {
+        	try {
+        		if(rs != null){
+        			rs.close();
+        		}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
+        return userID;
+    }
+	
+	//Checks whether the user with given username & password exists.
+    public boolean isValidUser(String username,String password){
+    	LogManager.getLogger().info("Validating user: "+username);
+        String query = "SELECT count(*) "
+                       +"FROM user_creds "
+                       +"WHERE username = ? "
+                       +"and password = ?";
+        
+        boolean status=false;
+        PreparedStatement statement=null;
+        ResultSet rs = null;
+        try {
+        	statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        	statement.setString(1, username);
+        	statement.setString(2, password);
+        	rs = statement.executeQuery();
+            if (rs.next()) {
+                int count=rs.getInt(1);
+                if(count==1){
+                    status=true;
+                }
+            }
+        } catch (SQLException sqle) {
+            System.out.println("__Error:retrieving search results"+ sqle);
+        } finally {
+            rs = null;
+        }
+        return status;
+    }
+}

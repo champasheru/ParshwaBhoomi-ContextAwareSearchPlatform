@@ -1,8 +1,10 @@
 package org.cs.parshwabhoomi.server.rest;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.cs.parshwabhoomi.server.dto.AbstractRequestDTO;
@@ -10,7 +12,8 @@ import org.cs.parshwabhoomi.server.dto.AbstractRequestDTO;
 public abstract class AbstractResource implements RESTfulResource {
 
 	private @Context UriInfo uriInfo;
-	
+	private @Context HttpServletRequest request;
+	private @Context SecurityContext securityContext;
 	
 	protected AbstractResource(){
 	}
@@ -23,6 +26,24 @@ public abstract class AbstractResource implements RESTfulResource {
 		return uriInfo;
 	}
 	
+	
+	/**
+	 * @return the request
+	 */
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+	
+	
+	/**
+	 * 
+	 * @return the security context
+	 */
+	public SecurityContext getSecurityContext(){
+		return securityContext;
+	}
+
+
 	public Response add(AbstractRequestDTO abstractRequestDTO) {
 		// TODO Auto-generated method stub
 		return null;

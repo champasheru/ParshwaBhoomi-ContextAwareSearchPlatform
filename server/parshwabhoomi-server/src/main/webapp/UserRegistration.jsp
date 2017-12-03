@@ -4,6 +4,7 @@
     Author     : saurabh
 --%>
 
+<%@page import="org.cs.parshwabhoomi.server.AppContext"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -30,25 +31,30 @@
         <%
             }
         %>
-    <%@ page import="org.cs.parshwabhoomi.server.domainobjects.BusinessCategory,
+    <%@ page import="org.cs.parshwabhoomi.server.model.BusinessCategory,
     				java.util.Collection,
-    				org.cs.parshwabhoomi.server.domainobjects.EndUser,
-    				org.cs.parshwabhoomi.server.dao.DBManager" %>
+    				org.cs.parshwabhoomi.server.model.EndUser,
+    				org.cs.parshwabhoomi.server.dao.raw.impl.EndUserDaoImpl,
+    				org.cs.parshwabhoomi.server.dao.raw.impl.BusinessCategoryDaoImpl" %>
     
         <div align="center">
             <form method="post" action="DataTransactions.jsp">
                 <input type="hidden" name="registrationFor" value="user">
                 <%
-                	DBManager dbManager=DBManager.getDBManager();
-                
+                	BusinessCategoryDaoImpl businessCategoryDaoImpl = (BusinessCategoryDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("BusinessCategoryDaoImpl");
+                	Map<String, BusinessCategory> categories = businessCategoryDaoImpl.getCategories();
+                	businessCategoryDaoImpl.close();
+                	
                     if(session.getAttribute("username")!=null && session.getAttribute("from")!=null){
                         String username=(String)session.getAttribute("username");
                         if(((String)session.getAttribute("from")).equals("portal")){
                             session.invalidate();
                         }
                         
-                        EndUser user=dbManager.getEndUserDetailedProfile(username);
-
+                        EndUserDaoImpl endUserDaoImpl = (EndUserDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("EndUserDaoImpl");
+                        EndUser user = endUserDaoImpl.getEndUserDetailedProfile(username);
+						endUserDaoImpl.close();
+						
                         System.out.println("userPrefs= "+user.getUserPrefs());
                         out.println("Name : "+username+"<br/><br/>");
                         out.println("<input name='name' type='hidden' value='"+username+"'>");
@@ -60,12 +66,11 @@
 
                         out.println("Please enter your preferences for the following:<br/>");
                         out.println("Please seperate your preferenceces with comma)<br/><br/>");
-
-                        Map<String, BusinessCategory> categories = dbManager.getCategories();
+						
                         for(Iterator<String> iterator = categories.keySet().iterator(); iterator.hasNext();){
                         	String categoryName = iterator.next();
                             out.print("<b>"+categories.get(categoryName).getDescription()+"</b><br/>");
-                            out.println("<textarea name='"+categoryName+"' rows='3' cols='50'>"+user.getUserPrefs().get(categoryName)+"</textarea><br/><br/>");
+                            out.println("<textarea name='"+categoryName+"' rows='3' cols='50'>"+user.getUserPrefs().get(BusinessCategory.valueOf(categoryName))+"</textarea><br/><br/>");
                         }
                         out.println("<br/><br/>");
                         out.println("<input type='submit' value='Update Profile'>");
@@ -80,7 +85,6 @@
                         out.println("Please enter your preferences for the following:<br/>");
                         out.println("Please seperate your preferenceces with comma)<br/><br/>");
 
-                        Map<String, BusinessCategory> categories = dbManager.getCategories();
                         for(Iterator<String> iterator = categories.keySet().iterator(); iterator.hasNext();){
                         	String categoryName = iterator.next();
                         	out.print("<b>"+categories.get(categoryName).getDescription()+"</b><br/>");

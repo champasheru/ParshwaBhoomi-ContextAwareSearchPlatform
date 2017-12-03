@@ -11,7 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.cs.parshwabhoomi.server.dto.impl.UserLoginRequestDTO;
+import org.cs.parshwabhoomi.server.dto.auth.UserLoginRequestDTO;
 
 /**
  * @author saurabh

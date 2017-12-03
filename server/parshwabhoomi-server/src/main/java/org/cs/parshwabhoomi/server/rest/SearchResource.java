@@ -5,10 +5,14 @@
  */
 package org.cs.parshwabhoomi.server.rest;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.cs.parshwabhoomi.server.dto.search.SearchRequestDTO;
 
 /**
  * @author saurabh
@@ -16,9 +20,11 @@ import javax.ws.rs.core.Response;
  *
  */
 public interface SearchResource {
-public static final String SEARCH_REQUEST_URI = "/search";
+	public static final String SEARCH_REQUEST_URI = "/q";
 	
 	@Path(SEARCH_REQUEST_URI)
-	@GET
-	public Response search(@QueryParam("q") String queryString);
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response search(SearchRequestDTO requestDTO);
 }

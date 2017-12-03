@@ -16,15 +16,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.cs.parshwabhoomi.server.AppContext;
-import org.cs.parshwabhoomi.server.dao.DBManager;
+import org.cs.parshwabhoomi.server.dao.raw.impl.UserCredentialDaoImpl;
 
 /**
  *
  * @author Shashank
  */
 public class LoginServlet extends HttpServlet {
-	
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init()
@@ -52,8 +54,10 @@ public class LoginServlet extends HttpServlet {
             String password=request.getParameter("password");
             String from=request.getParameter("from");
                 if(username!=null && password!=null && from!=null){
-                    DBManager dbManager=DBManager.getDBManager();
-                    boolean result=dbManager.isValidUser(username, password);
+                	UserCredentialDaoImpl userCredentialDaoImpl = (UserCredentialDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("UserCredentialDaoImpl");
+                    boolean result = userCredentialDaoImpl.isValidUser(username, password);
+                    userCredentialDaoImpl.close();
+                    
                     System.out.println("_isValidUser= "+result);
                     //from can be either "device" or "portal"
                     if(from.equals("device")){

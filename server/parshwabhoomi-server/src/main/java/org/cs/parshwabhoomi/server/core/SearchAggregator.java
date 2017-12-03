@@ -5,7 +5,8 @@ package org.cs.parshwabhoomi.server.core;
 
 import java.util.List;
 
-import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
+import org.cs.parshwabhoomi.server.model.SearchContext;
+import org.cs.parshwabhoomi.server.model.SearchResult;
 
 /**
  * @author saurabh
@@ -13,5 +14,5 @@ import org.cs.parshwabhoomi.server.domainobjects.SearchResult;
  *
  */
 public interface SearchAggregator {
-	public List<SearchResult> getResults(String userAuth, String query);
+	public List<SearchResult> getResults(SearchContext context);
 }

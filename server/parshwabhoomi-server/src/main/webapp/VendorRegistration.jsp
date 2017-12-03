@@ -6,7 +6,6 @@
 
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.Map"%>
-<%@page import="org.cs.parshwabhoomi.server.dao.DBManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
@@ -31,13 +30,16 @@
                 
                 Please select business category:<br/>
                 <select name="category" >
-                <%@ page import="org.cs.parshwabhoomi.server.domainobjects.BusinessCategory,
-                				java.util.Collection" %>
-                <% 
-                	DBManager dbManager = DBManager.getDBManager();
-                    Map<String, BusinessCategory> categories = dbManager.getCategories();
-                    for(Iterator<String> iterator = categories.keySet().iterator(); iterator.hasNext(); ){
-                    	String categoryName = iterator.next();
+                <%@ page import="org.cs.parshwabhoomi.server.model.BusinessCategory,
+                				java.util.Collection,
+                				org.cs.parshwabhoomi.server.AppContext,
+                				org.cs.parshwabhoomi.server.dao.raw.impl.BusinessCategoryDaoImpl" %>
+                <%
+                	BusinessCategoryDaoImpl businessCategoryDaoImpl = (BusinessCategoryDaoImpl) AppContext.getDefaultContext().getDaoProvider().getDAO("BusinessCategoryDaoImpl");
+                	Map<String, BusinessCategory> categories = businessCategoryDaoImpl.getCategories();
+                	businessCategoryDaoImpl.close();
+                	for (Iterator<String> iterator = categories.keySet().iterator(); iterator.hasNext();) {
+                		String categoryName = iterator.next();
                 %>
                     <option id="<%=categoryName%>" value="<%=categoryName%>"><%=categories.get(categoryName).getDescription()%></option>
                 <% 
