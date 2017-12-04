@@ -6,8 +6,8 @@ package org.cs.parshwabhoomi.server.dao.raw;
 import org.cs.parshwabhoomi.server.model.EndUser;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public interface EndUserDao {

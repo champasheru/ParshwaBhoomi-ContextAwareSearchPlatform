@@ -22,8 +22,8 @@ import org.cs.parshwabhoomi.server.model.UserCredential;
 import org.cs.parshwabhoomi.server.model.UserCredential.Role;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {

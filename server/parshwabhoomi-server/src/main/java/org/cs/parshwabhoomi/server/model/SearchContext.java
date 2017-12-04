@@ -4,8 +4,8 @@
 package org.cs.parshwabhoomi.server.model;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  * Provides the search context which encapsulates different search criterias and acts
  * as an inout to the further context aware search processing. 

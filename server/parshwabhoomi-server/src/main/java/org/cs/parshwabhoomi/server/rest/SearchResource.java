@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	28-Oct-2017:7:02:15 PM
  * saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  */
 package org.cs.parshwabhoomi.server.rest;
 
@@ -15,8 +15,8 @@ import javax.ws.rs.core.Response;
 import org.cs.parshwabhoomi.server.dto.search.SearchRequestDTO;
 
 /**
- * @author saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  *
  */
 public interface SearchResource {

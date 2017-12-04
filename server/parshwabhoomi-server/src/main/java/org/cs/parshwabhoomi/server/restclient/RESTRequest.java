@@ -6,8 +6,8 @@ package org.cs.parshwabhoomi.server.restclient;
 import java.util.Map;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public interface RESTRequest {

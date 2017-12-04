@@ -18,8 +18,8 @@ import org.cs.parshwabhoomi.server.restclient.impl.DefaultRESTClient;
 import org.cs.parshwabhoomi.server.restclient.impl.RESTRequestImpl;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class GoogleSearchService {

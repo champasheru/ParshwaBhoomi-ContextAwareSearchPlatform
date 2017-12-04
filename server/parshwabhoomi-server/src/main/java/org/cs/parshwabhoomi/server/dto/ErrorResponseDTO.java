@@ -4,7 +4,7 @@
 package org.cs.parshwabhoomi.server.dto;
 
 /**
- * @author saurabh
+ * @author gayatri
  *
  */
 public class ErrorResponseDTO extends AbstractResponseDTO {

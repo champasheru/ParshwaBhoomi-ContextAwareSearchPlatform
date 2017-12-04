@@ -14,8 +14,8 @@ import org.cs.parshwabhoomi.server.dao.raw.BusinessCategoryDao;
 import org.cs.parshwabhoomi.server.model.BusinessCategory;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class BusinessCategoryDaoImpl extends AbstractRawDao implements BusinessCategoryDao {

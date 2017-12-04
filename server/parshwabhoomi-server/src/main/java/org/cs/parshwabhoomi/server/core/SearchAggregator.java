@@ -9,8 +9,8 @@ import org.cs.parshwabhoomi.server.model.SearchContext;
 import org.cs.parshwabhoomi.server.model.SearchResult;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public interface SearchAggregator {

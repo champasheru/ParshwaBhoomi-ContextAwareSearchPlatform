@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:21:10 PM
  * saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  */
 package org.cs.parshwabhoomi.server.dao.raw.impl;
 
@@ -14,8 +14,8 @@ import org.cs.parshwabhoomi.server.dao.raw.BusinessVendorDao;
 import org.cs.parshwabhoomi.server.model.BusinessVendor;
 
 /**
- * @author saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  *
  */
 public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVendorDao {

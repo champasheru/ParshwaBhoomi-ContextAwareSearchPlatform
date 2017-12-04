@@ -1,15 +1,15 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:39:52 PM
  * saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  */
 package org.cs.parshwabhoomi.server.dto.auth;
 
 import org.cs.parshwabhoomi.server.dto.AbstractRequestDTO;
 
 /**
- * @author saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  *
  */
 public class UserLoginRequestDTO extends AbstractRequestDTO {

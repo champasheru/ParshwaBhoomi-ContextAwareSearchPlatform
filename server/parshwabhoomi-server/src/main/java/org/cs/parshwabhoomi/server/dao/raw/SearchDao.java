@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:22:28 PM
  * saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  */
 package org.cs.parshwabhoomi.server.dao.raw;
 
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import org.cs.parshwabhoomi.server.model.SearchResult;
 
 /**
- * @author saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  *
  */
 public interface SearchDao {

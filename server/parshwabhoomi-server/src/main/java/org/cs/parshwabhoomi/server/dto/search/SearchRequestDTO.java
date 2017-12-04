@@ -6,8 +6,8 @@ package org.cs.parshwabhoomi.server.dto.search;
 import org.cs.parshwabhoomi.server.dto.AbstractRequestDTO;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class SearchRequestDTO extends AbstractRequestDTO {

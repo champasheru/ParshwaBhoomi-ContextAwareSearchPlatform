@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	29-Oct-2017:7:47:00 PM
  * saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  */
 package org.cs.parshwabhoomi.server.rest.impl;
 
@@ -17,8 +17,8 @@ import org.cs.parshwabhoomi.server.rest.AbstractResource;
 import org.cs.parshwabhoomi.server.rest.UserResource;
 
 /**
- * @author saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  *
  */
 @Path("/user")

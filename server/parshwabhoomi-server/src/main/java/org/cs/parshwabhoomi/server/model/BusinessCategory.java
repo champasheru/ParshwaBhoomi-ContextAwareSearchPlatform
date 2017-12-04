@@ -7,7 +7,7 @@ package org.cs.parshwabhoomi.server.model;
 
 /**
  *
- * @author saurabh
+ * @author gayatri
  * DB table: categories
  */
 public enum BusinessCategory{

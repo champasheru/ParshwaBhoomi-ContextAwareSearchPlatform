@@ -17,8 +17,8 @@ import org.cs.parshwabhoomi.server.restclient.RESTRequest.ContentType;
 import org.cs.parshwabhoomi.server.restclient.RESTRequest.Method;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class DefaultRESTClient extends AbstractRESTClient {

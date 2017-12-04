@@ -7,7 +7,7 @@ package org.cs.parshwabhoomi.server.model;
 
 /**
  *
- * @author saurabh
+ * @author gayatri
  * This class encapsulates the complete search result information retrieved from DB for a given user
  * query by matching it against the user context info and history persisted in DB.
  * There will be a one instance of this class per search result computed by the search aggregator(and it's

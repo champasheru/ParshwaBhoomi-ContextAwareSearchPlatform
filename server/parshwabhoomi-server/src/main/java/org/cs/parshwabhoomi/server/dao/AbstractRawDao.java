@@ -1,7 +1,7 @@
 /**
  * parshwabhoomi-server	11-Jul-2017:7:51:35 PM
  * saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  */
 package org.cs.parshwabhoomi.server.dao;
 
@@ -11,8 +11,8 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 
 /**
- * @author saurabh
- * git: champasheru Saurabh Sirdeshmukh saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru Gayatri Sirdeshmukh dange.gayatri@gmail.com
  *
  */
 public class AbstractRawDao implements RawDao {

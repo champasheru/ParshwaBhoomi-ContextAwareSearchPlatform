@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public interface RESTClient {
