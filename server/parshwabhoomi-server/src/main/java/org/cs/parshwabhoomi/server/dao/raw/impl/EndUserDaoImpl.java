@@ -131,7 +131,7 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
     //Updates the existing user record & also returns the user id of the record from the users table of the db.
     private int updateBasicUserProfile(EndUser endUser){
         String query = "UPDATE end_users SET route_or_lane=?, sublocality=?, locality=?, state=?, pincode=?, latitude=?, longitude=?, "
-        				+ "primaryMobile=?, secondaryMobile=?, landline=?, email=?, education=?, work=? "
+        				+ "primary_mobile=?, secondary_mobile=?, landline=?, email=?, education=?, work=? "
                         +"WHERE user_id=?";
 
         PreparedStatement statement = null;
@@ -149,10 +149,10 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
             statement.setString(8, endUser.getContactInfo().getPrimaryMobile());
             statement.setString(9, endUser.getContactInfo().getSecondaryMobile());
             statement.setString(10, endUser.getContactInfo().getLandline());
-            statement.setString(10, endUser.getContactInfo().getEmail());
-            statement.setString(11, endUser.getEducationInfo());
-            statement.setString(12, endUser.getWorkInfo());
-            statement.setLong(13, endUser.getUserCredential().getId());
+            statement.setString(11, endUser.getContactInfo().getEmail());
+            statement.setString(12, endUser.getEducationInfo());
+            statement.setString(13, endUser.getWorkInfo());
+            statement.setLong(14, endUser.getUserCredential().getId());
             
             status = statement.executeUpdate();
             if (status > 0) {
@@ -205,6 +205,7 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
             	
                 long userID = rs.getLong("user_creds_id");
                 userCredential=new UserCredential();
+                userCredential.setUsername(username);
                 userCredential.setId(userID);
                 userCredential.setRole(Role.valueOf(rs.getString("role")));
                 endUser.setUserCredential(userCredential);

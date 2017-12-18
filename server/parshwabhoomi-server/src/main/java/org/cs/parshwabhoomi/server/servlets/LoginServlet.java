@@ -80,13 +80,13 @@ public class LoginServlet extends HttpServlet {
                             System.out.println("_A valid user login in from portal...");
                             //If the username is valid,keep it in session.
                             session.setAttribute("username", username);
-                            RequestDispatcher dispatcher=getServletContext().getRequestDispatcher("/UserRegistration.jsp");
+                            RequestDispatcher dispatcher=getServletContext().getRequestDispatcher("/UserProfile.jsp");
                             dispatcher.forward(request, response);
                         }else{
                             session.setAttribute("isUserAuthenticated",Boolean.FALSE);
                             session.setAttribute("username", username);
                             session.setAttribute("password", password);
-                            RequestDispatcher dispatcher=getServletContext().getRequestDispatcher("/UserLogin.jsp");
+                            RequestDispatcher dispatcher=getServletContext().getRequestDispatcher("/Login.jsp");
                             dispatcher.forward(request, response);
                         }
                     }

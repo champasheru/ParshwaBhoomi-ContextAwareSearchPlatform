@@ -14,4 +14,6 @@ import org.cs.parshwabhoomi.server.model.BusinessVendor;
  */
 public interface BusinessVendorDao {
 	public int add(BusinessVendor businessVendor);
+	
+	public BusinessVendor getByUsername(String username);
 }
