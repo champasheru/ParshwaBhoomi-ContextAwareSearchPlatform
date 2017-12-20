@@ -24,7 +24,7 @@ public class UserCredentialDaoImpl extends AbstractRawDao implements UserCredent
 	
 	public long addUserCredential(UserCredential userCredential){
         String query = "INSERT INTO user_creds (username,password,role) " + "VALUES (?,?,?)";
-        String userIDQuery="SELECT id from users WHERE username='"+userCredential.getUsername()+"'";
+        String userIDQuery="SELECT id from user_creds WHERE username='"+userCredential.getUsername()+"'";
         
         PreparedStatement statement = null;
         

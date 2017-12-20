@@ -3,20 +3,12 @@
  */
 package org.cs.parshwabhoomi.server.core;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
 import org.cs.parshwabhoomi.server.dao.raw.impl.SearchDaoImpl;
-import org.cs.parshwabhoomi.server.dto.adapter.GoogleGeocodedAddressResponseDTOAdapter;
 import org.cs.parshwabhoomi.server.model.Address;
 import org.cs.parshwabhoomi.server.model.SearchContext;
 import org.cs.parshwabhoomi.server.model.SearchResult;
@@ -28,13 +20,9 @@ import org.cs.parshwabhoomi.server.model.SearchResult.Type;
  *
  */
 public class SearchAggregatorImpl implements SearchAggregator {
-    private static final String GOOGLE_MAPS_GEOCODING_API_BASE_URI="https://maps.googleapis.com/maps/api/geocode/json?";
-    
     private SearchContext searchContext;
     private Address address;
     private static final String DEFAULT_ADDRESS = "Pune";
-    
-    
 
 	/* (non-Javadoc)
 	 * @see org.cs.parshwabhoomi.server.core.SearchAggregator#getResults(org.cs.parshwabhoomi.server.model.SearchContext)
@@ -48,7 +36,8 @@ public class SearchAggregatorImpl implements SearchAggregator {
 		
 		LogManager.getLogger().info("Resolving the address from the search context...");
         if(searchContext.getLatitude() > 0 && searchContext.getLongitude() > 0){
-        	address = getReverseGeocodedAddressFrom(searchContext.getLatitude(), searchContext.getLongitude());
+        	GoogleMapsService mapsService = new GoogleMapsService();
+        	address = mapsService.getReverseGeocodedAddress(searchContext.getLatitude(), searchContext.getLongitude());
         }else{
         	address = new Address();
         	address.setLocality(DEFAULT_ADDRESS);
@@ -159,51 +148,4 @@ public class SearchAggregatorImpl implements SearchAggregator {
         
         return searchResults;
 	}
-	
-	
-    //Use the Google Maps API -Reverse Geocoding service & get the formatted,human readable address for the corresponding
-    //(lat,long) pair.
-    private Address getReverseGeocodedAddressFrom(float latitude, float longitude){
-        InputStream is = null;
-        Address address = null;
-        
-        try {
-        	String temp=GOOGLE_MAPS_GEOCODING_API_BASE_URI+
-        				"latlng="+latitude+","+longitude
-        				+"&key="+AppContext.getDefaultContext().getProperty(AppContext.GOOGLE_API_KEY);
-            System.out.println("[DefaultSearchService] The geocoding URL= "+temp);
-            URL tempURL = new URL(temp);
-            HttpURLConnection conn=(HttpURLConnection)tempURL.openConnection();
-            conn.connect();
-            
-            is=conn.getInputStream();
-            BufferedReader br= new BufferedReader(new InputStreamReader(is)); 
-            System.out.println("[Address Response]\n");
-                
-            StringBuilder builder=new StringBuilder();
-            String aLine=null;
-            while((aLine=br.readLine())!=null){
-                System.out.println(aLine);
-                builder.append(aLine);
-            }
-            System.out.println("[End ofResponse]\n");
-            
-            return GoogleGeocodedAddressResponseDTOAdapter.parseJsonForAddress(builder.toString());
-            
-        } catch (MalformedURLException ex) {
-            System.out.println("[DefaultSearchService] Invalid URL: \n");
-        } catch (IOException ioe) {
-            ioe.printStackTrace(System.out);
-        }finally{
-            try{
-                if(is!=null){
-                    is.close();
-                }
-            } catch (IOException ioe){
-                
-            }
-        }
-        
-        return address;
-    }
 }

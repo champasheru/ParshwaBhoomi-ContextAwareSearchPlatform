@@ -4,6 +4,15 @@
  */
 package org.cs.parshwabhoomi.server.dto.adapter;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.model.Address;
 import org.json.JSONArray;
@@ -14,9 +23,9 @@ import org.json.JSONObject;
  *
  * @author gayatri
  */
-public class GoogleGeocodedAddressResponseDTOAdapter {
+public class GoogleMapsAddressResponseDTOAdapter {
     
-    public static Address parseJsonForAddress(String jsonString){
+    public static Address getReverseGeocodedAddress(String jsonString){
     	Address address = null;
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -60,6 +69,26 @@ public class GoogleGeocodedAddressResponseDTOAdapter {
         }
                 
         return address;
+    }
+    
+    
+    public static List<Float> getGeocodedAddress(String jsonString){
+    	List<Float> latLong = new ArrayList<>();
+    	JsonReader reader = Json.createReader(new StringReader(jsonString));
+    	
+    	JsonArray array = reader.readObject().getJsonArray("results");
+    	if(array.size() > 0){
+    		JsonObject object = array.getJsonObject(0);
+        	object = object.getJsonObject("geometry").getJsonObject("location");
+        	float lat = (float)object.getJsonNumber("lat").doubleValue();
+        	float lng = (float)object.getJsonNumber("lng").doubleValue();
+        	latLong.add(lat);
+        	latLong.add(lng);
+    	}else{
+    		LogManager.getLogger().warn("No geocoded lat long found! ");
+    	}
+    	LogManager.getLogger().info("Geocoded lat long = "+latLong);
+    	return latLong;
     }
     
 }

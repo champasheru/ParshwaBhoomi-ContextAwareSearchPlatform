@@ -67,14 +67,15 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
     }
     
     private void addUserPreferences(EndUser endUser){
-        String query = "INSERT INTO user_preferences (user_id,category_id,preference) " + "VALUES (?,?,?)";
+        String query = "INSERT INTO user_preferences (user_id, category_id, preference) " + "VALUES (?,?,?)";
 
-        System.out.println("__Adding the user preferences for user: "+endUser.getUserCredential().getUsername());
+        LogManager.getLogger().info("Adding the user preferences for user: "+endUser.getUserCredential().getUsername());
+        LogManager.getLogger().info("Prefs: "+endUser.getUserPrefs().size());
         PreparedStatement statement = null;
         
         int status = 0;
         try {
-            System.out.println("user_id received= "+endUser.getUserCredential().getId());
+        	LogManager.getLogger().info("user_id received= "+endUser.getUserCredential().getId());
             statement = connection.prepareStatement(query);
             statement.setLong(1, endUser.getUserCredential().getId());
             
@@ -86,12 +87,12 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
                     statement.setString(3, pref.trim());
                     status = statement.executeUpdate();
                     if (status > 0) {
-                    	System.out.println("__The MULTIPLE UserCredential Preference added successfully for category: "+category.name());
+                    	LogManager.getLogger().info("The MULTIPLE User Preferences added successfully for category: "+category.name());
                     }
                }//end of if the pref for category has some valid value
             }
         } catch (SQLException sqle) {
-            System.out.println("__Error:Adding user preference " + sqle);
+        	LogManager.getLogger().error("Error:Adding user preferences ", sqle);
         } finally {
             
         }
@@ -99,28 +100,28 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
     
     
     public void updateUserProfile(EndUser endUser){
-        int userID = this.updateBasicUserProfile(endUser);
-        if(userID > 0){
-            String query = "DELETE FROM user_preferences WHERE user_id='"+userID+"'";
+        int status = updateBasicUserProfile(endUser);
+        if(status > 0){
+        	LogManager.getLogger().info("Deleting existing prefs to be followed by addition of new prefs...");
+            String query = "DELETE FROM user_preferences WHERE user_id='"+endUser.getUserCredential().getId()+"'";
             
             Statement statement = null;
-            int status = 0;
+            status = 0;
             try {
                 statement = connection.createStatement();
-                status=statement.executeUpdate(query);
+                status = statement.executeUpdate(query);
                 if (status > 0) {
-                    System.out.println("__All the previous UserCredential Preferences deleted successfully...");
+                	LogManager.getLogger().info("All the previous User Preferences deleted successfully...");
                     this.addUserPreferences(endUser);
                 }
             } catch (SQLException sqle) {
-                System.out.println("__Error:Updating the USER PREFS info" + sqle);
+            	LogManager.getLogger().error("Error:Updating the USER PREFS info", sqle);
             } finally {
             	if(statement != null){
             		try {
 						statement.close();
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						LogManager.getLogger().error("Error:Updating the USER PREFS info", e);
 					}
             	}
             }
@@ -156,17 +157,16 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
             
             status = statement.executeUpdate();
             if (status > 0) {
-                System.out.println("__The UserCredential Basic Info updated successfully!");
+            	LogManager.getLogger().info("Basic user profile updated successfully!");
             }
         } catch (SQLException sqle) {
-            System.out.println("__Error:Updating the Basic UserCredential info" + sqle);
+        	LogManager.getLogger().error("Error:Updating the Basic UserCredential info", sqle);
         } finally {
         	if(statement != null){
         		try {
 					statement.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LogManager.getLogger().error("Error:Updating the Basic UserCredential info", e);
 				}
         	}
         }
@@ -178,17 +178,17 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
     //TODO: needs DB schema update to include address and contact info fields.
     //Same method may also be desirable but with user ID.
     public EndUser getEndUserDetailedProfile(String username){
+    	LogManager.getLogger().info("Retrieving detailed end user profile...");
+    	
         String userBasicInfoQuery = "SELECT user_creds.id as user_creds_id, role, end_users.* "
                        +"FROM user_creds inner join end_users on user_creds.id = end_users.user_id "
                        +"WHERE username='"+username+"' ";
 
-        String userPrefsInfoQuery = "SELECT category_name,preference "
-                       +"FROM user_preferences,categories "
-                       +"WHERE categories.id=user_preferences.category_id "
+        String userPrefsInfoQuery = "SELECT category_name, preference "
+                       +"FROM user_preferences, categories "
+                       +"WHERE categories.id = user_preferences.category_id "
                        +"and user_id = ? group by category_name, preference";
         
-        System.out.println("__Query:\n"+userBasicInfoQuery+"\n");
-
         Statement statement=null;
         PreparedStatement userPrefsStmt=null;
         ResultSet rs = null;
@@ -209,6 +209,9 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
                 userCredential.setId(userID);
                 userCredential.setRole(Role.valueOf(rs.getString("role")));
                 endUser.setUserCredential(userCredential);
+                
+                endUser.setName(rs.getString("name"));
+                endUser.setDateOfBirth(new java.util.Date(rs.getDate("dob").getTime()));
                 
                 Address address = new Address();
                 address.setLatitude(rs.getString("latitude"));
@@ -234,31 +237,30 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
                 resultSet = userPrefsStmt.executeQuery();
                 EnumMap<BusinessCategory,String> userPrefs = new EnumMap<>(BusinessCategory.class);
                 while(resultSet.next()){
+                	LogManager.getLogger().info("Retrieving user prefs...");
                     String categoryName = resultSet.getString("category_name");
                     BusinessCategory businessCategory = BusinessCategory.valueOf(categoryName);
                     String preference=resultSet.getString("preference");
-                    System.out.println("_Pref for category= "+categoryName+" preference= "+preference);
+                    LogManager.getLogger().info("Pref for category= "+categoryName+" preference= "+preference);
                     userPrefs.put(businessCategory, preference);
                 }
                 endUser.setUserPrefs(userPrefs);
             }
         } catch (SQLException sqle) {
-            System.out.println("__Error:retrieving user profile"+ sqle);
+        	LogManager.getLogger().error("Error:retrieving detailed user profile"+ sqle);
         } finally {
         	if(rs != null){
         		try {
 					rs.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LogManager.getLogger().error("Error:retrieving detailed user profile"+ e);
 				}
         	}
         	if(resultSet != null){
         		try {
         			resultSet.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LogManager.getLogger().error("Error:retrieving detailed user profile"+ e);
 				}
         	}
             rs = null;

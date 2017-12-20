@@ -16,6 +16,8 @@ import org.cs.parshwabhoomi.server.model.Address;
 import org.cs.parshwabhoomi.server.model.BusinessCategory;
 import org.cs.parshwabhoomi.server.model.BusinessVendor;
 import org.cs.parshwabhoomi.server.model.ContactInfo;
+import org.cs.parshwabhoomi.server.model.UserCredential;
+import org.cs.parshwabhoomi.server.model.UserCredential.Role;
 
 /**
  * @author gayatri
@@ -31,43 +33,127 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 	public int add(BusinessVendor businessVendor) {
 		LogManager.getLogger().info("Adding business vendor: "+businessVendor.getName());
     	
-        String query = "INSERT INTO vendors (category_id,name,route_or_lane,sublocality,locality,primary_mobile,advertisement_and_offerings) " +
-                " VALUES (?,?,?,?,?,?,?)";
+        String query = "INSERT INTO business_vendors(user_id, name, "
+        		+ "route_or_lane, sublocality, locality, state, pincode, "
+        		+ "primary_mobile, secondary_mobile, email, landline, "
+        		+ "category_id, advertisement_and_offerings, tagline, latitude, longitude) "
+                +" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
         PreparedStatement statement = null;
         int status = 0;
         try {
             statement = connection.prepareStatement(query);
             
-            statement.setLong(1, businessVendor.getBusinessCategory().getId());
+            statement.setLong(1, businessVendor.getUserCredential().getId());
             statement.setString(2, businessVendor.getName());
+            
             statement.setString(3, businessVendor.getAddress().getRouteOrLane());
             statement.setString(4, businessVendor.getAddress().getSublocality());
             statement.setString(5, businessVendor.getAddress().getLocality());
-            statement.setString(6, businessVendor.getContactInfo().getPrimaryMobile());
-            statement.setString(7, businessVendor.getOfferings());
+            statement.setString(6, businessVendor.getAddress().getState());
+            statement.setString(7, businessVendor.getAddress().getPincode());
+            
+            statement.setString(8, businessVendor.getContactInfo().getPrimaryMobile());
+            statement.setString(9, businessVendor.getContactInfo().getSecondaryMobile());
+            statement.setString(10, businessVendor.getContactInfo().getEmail());
+            statement.setString(11, businessVendor.getContactInfo().getLandline());
+            
+            statement.setLong(12, businessVendor.getBusinessCategory().getId());
+            statement.setString(13, businessVendor.getOfferings());
+            statement.setString(14, businessVendor.getTagLine());
+            
+            statement.setString(15, businessVendor.getAddress().getLatitude());
+            statement.setString(16, businessVendor.getAddress().getLongitude());
+            
             status = statement.executeUpdate();
             if (status > 0) {
             	LogManager.getLogger().info("The BusinessVendor added successfully!");
             }
         } catch (SQLException sqle) {
-        	LogManager.getLogger().error("__Couldn't add vendor info", sqle);
+        	LogManager.getLogger().error("Couldn't add vendor info!", sqle);
         } finally {
 			try {
 				if (statement != null) {
 					statement.close();
 				}
 			} catch (SQLException e) {
-				LogManager.getLogger().error("__Couldn't add vendor info", e);
+				LogManager.getLogger().error("Couldn't add vendor info!", e);
 			}
 		}
         return status;
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see org.cs.parshwabhoomi.server.dao.raw.BusinessVendorDao#update(org.cs.parshwabhoomi.server.model.BusinessVendor)
+	 */
+	@Override
+	public int update(BusinessVendor businessVendor) {
+		LogManager.getLogger().info("Updating business vendor: id="+businessVendor.getId()+" name=" +businessVendor.getName());
+    	
+        String query = "UPDATE business_vendors "
+        		+ "SET  name = ?, "
+        		+ "route_or_lane = ?, sublocality = ?, locality = ?, state = ?, pincode = ?, "
+        		+ "primary_mobile = ?, secondary_mobile = ?, email = ?, landline = ?, "
+        		+ "category_id = ?, advertisement_and_offerings = ?, tagline = ?, latitude = ?, longitude = ? "
+                +" WHERE id = ?";
+        
+        PreparedStatement statement = null;
+        int status = 0;
+        try {
+            statement = connection.prepareStatement(query);
+            
+            statement.setString(1, businessVendor.getName());
+            
+            statement.setString(2, businessVendor.getAddress().getRouteOrLane());
+            statement.setString(3, businessVendor.getAddress().getSublocality());
+            statement.setString(4, businessVendor.getAddress().getLocality());
+            statement.setString(5, businessVendor.getAddress().getState());
+            statement.setString(6, businessVendor.getAddress().getPincode());
+            
+            statement.setString(7, businessVendor.getContactInfo().getPrimaryMobile());
+            statement.setString(8, businessVendor.getContactInfo().getSecondaryMobile());
+            statement.setString(9, businessVendor.getContactInfo().getEmail());
+            statement.setString(10, businessVendor.getContactInfo().getLandline());
+            
+            statement.setLong(11, businessVendor.getBusinessCategory().getId());
+            statement.setString(12, businessVendor.getOfferings());
+            statement.setString(13, businessVendor.getTagLine());
+            
+            statement.setString(14, businessVendor.getAddress().getLatitude());
+            statement.setString(15, businessVendor.getAddress().getLongitude());
+            
+            statement.setLong(16, businessVendor.getId());
+            
+            status = statement.executeUpdate();
+            LogManager.getLogger().info("The BusinessVendor update status ="+status);
+            if (status > 0) {
+            	LogManager.getLogger().info("The BusinessVendor added successfully!");
+            }
+        } catch (SQLException sqle) {
+        	LogManager.getLogger().error("Couldn't add vendor info!", sqle);
+        } finally {
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException e) {
+				LogManager.getLogger().error("Couldn't add vendor info!", e);
+			}
+		}
+        
+        return status;
+	}
+
+
 
 	@Override
 	public BusinessVendor getByUsername(String username) {
 		LogManager.getLogger().info("Retrieving vendor profile...");
 		
-		String query = "SELECT business_vendors.id as vid, category_id, name, route_or_lane, sublocality, locality, state, advertisement_and_offerings, "
+		String query = "SELECT business_vendors.id as vid, user_creds.id as ucid, role, "
+				+ "category_id, name, route_or_lane, sublocality, locality, state, advertisement_and_offerings, "
 				+"pincode, latitude, longitude, primary_mobile, secondary_mobile, landline, email, tagline, user_id, "
 				+"categories.id as cid, category_name, category_description "
 				+ "FROM ((business_vendors INNER JOIN user_creds ON user_creds.id = business_vendors.user_id) "
@@ -85,6 +171,13 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 			rs = prepStmt.executeQuery();
 			if (rs.next()) {
 				vendor = new BusinessVendor();
+				
+				UserCredential credential = new UserCredential();
+				credential.setId(rs.getLong("ucid"));
+				credential.setUsername(username);
+				credential.setRole(Role.valueOf(rs.getString("role")));
+				vendor.setUserCredential(credential);
+				
 				vendor.setId(rs.getLong("vid"));
 				vendor.setName(rs.getString("name"));
 				
@@ -111,6 +204,7 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 				String catrgoryName = rs.getString("category_name");
 				if(catrgoryName != null){
 					BusinessCategory bc = BusinessCategory.valueOf(rs.getString("category_name"));
+					bc.setId(rs.getLong("cid"));
 					vendor.setBusinessCategory(bc);
 				}
 			}

@@ -4,6 +4,8 @@
     Author     : saurabh
 --%>
 
+<%@page import="java.util.Date"%>
+<%@page import="org.cs.parshwabhoomi.server.utils.DateTimeUtils"%>
 <%@page import="org.cs.parshwabhoomi.server.model.UserCredential"%>
 <%@page import="org.apache.logging.log4j.LogManager"%>
 <%@page import="java.util.EnumMap"%>
@@ -20,24 +22,32 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
         <title>Parshwabhoomi: Context Based Search- <%=session.getAttribute("username")%></title>
     </head>
+    
     <body>
-        <h2 align="center">Welcome back <%=session.getAttribute("username")%>!</h2>
-    </head>
-    <body>
-        
     <%@ page import="org.cs.parshwabhoomi.server.model.BusinessCategory,
     				java.util.Collection,
     				org.cs.parshwabhoomi.server.model.EndUser,
     				org.cs.parshwabhoomi.server.dao.raw.impl.EndUserDaoImpl,
     				org.cs.parshwabhoomi.server.dao.raw.impl.BusinessCategoryDaoImpl" %>
-    
-        <div align="center">
+    				
+    	<div style="position: sticky; top:0; width: 100%; background-color: #EFEFEF">
+    		<div style="width:50%; margin-left: 25%; margin-right:25%; text-align:center">Parshwabhoomi - Context Based Search</div>
+    		<div style="margin-left:70%; right: 4px; margin-right: 0; width:30%; text-align: right"><%=session.getAttribute("username")%> | <a href="Logout.jsp">Logout</a></div>
+    	</div>
+    	
+        <div align="center" style="width: 100%; margin-top: 8px">
         	<!-- post it to self -->
             <form method="post" action="UserProfile.jsp">
                 <%
+                	String username = (String)session.getAttribute("username");
+        			String from = (String)session.getAttribute("from");
+        			//mode is set from Profile.jsp
+        			String mode = (String)session.getAttribute("mode");
+        			LogManager.getLogger().info("mode ="+mode);
+            		LogManager.getLogger().info("from ="+from);
+            		
                 	BusinessCategoryDaoImpl businessCategoryDaoImpl = (BusinessCategoryDaoImpl) AppContext.getDefaultContext()
                 			.getDaoProvider().getDAO("BusinessCategoryDaoImpl");
                 	Map<String, BusinessCategory> categories = businessCategoryDaoImpl.getCategories();
@@ -46,71 +56,97 @@
                 	EndUserDaoImpl endUserDaoImpl = (EndUserDaoImpl) AppContext.getDefaultContext().getDaoProvider()
                 			.getDAO("EndUserDaoImpl");
                 	
-                	String username = (String)session.getAttribute("username");
-                	String mode = (String)session.getAttribute("mode");
-                	//mode is set from Profile.jsp
                 	if (mode.equalsIgnoreCase("view")) {
                 		LogManager.getLogger().info("Rendering user profile...");
                 		session.setAttribute("mode", "edit");
                 	} else {
                 		//save the updated profile to db.
-                		LogManager.getLogger().info("Updating user profile...");
+                		LogManager.getLogger().info("Updating end user profile...");
                 		
-                		EndUser endUser = new EndUser();
-                		UserCredential credential = (UserCredential)session.getAttribute("userCred");
-                		endUser.setUserCredential(credential);
+                		EndUser endUser = (EndUser)session.getAttribute("endUser");
                 		
                 		endUser.setName(request.getParameter("name"));
+                		String dob = request.getParameter("dob");
+                		Date date = DateTimeUtils.getDateFromString(dob);
+                		endUser.setDateOfBirth(date);
                 		
                 		Address address = new Address();
-                		address.setRouteOrLane(request.getParameter("addressLine1"));
-                		address.setSublocality(request.getParameter("addressLine2"));
-                		address.setLocality(request.getParameter("city"));
-                		address.setState(request.getParameter("state"));
-                		address.setPincode(request.getParameter("pincode"));
+                		address.setRouteOrLane(request.getParameter("addressLine1").trim());
+                		address.setSublocality(request.getParameter("addressLine2").trim());
+                		address.setLocality(request.getParameter("city").trim());
+                		address.setState(request.getParameter("state").trim());
+                		address.setPincode(request.getParameter("pincode").trim());
                 		endUser.setAddress(address);
                 		
                 		ContactInfo contactInfo = new ContactInfo();
-                		contactInfo.setPrimaryMobile(request.getParameter("primaryMobile"));
-                		contactInfo.setSecondaryMobile(request.getParameter("secondaryMobile"));
-                		contactInfo.setEmail(request.getParameter("email"));
+                		contactInfo.setPrimaryMobile(request.getParameter("primaryMobile").trim());
+                		contactInfo.setSecondaryMobile(request.getParameter("secondaryMobile").trim());
+                		contactInfo.setEmail(request.getParameter("email").trim());
                 		endUser.setContactInfo(contactInfo);
                 		
-                		endUser.setWorkInfo(request.getParameter("work"));
-                		endUser.setEducationInfo(request.getParameter("education"));
+                		endUser.setWorkInfo(request.getParameter("work").trim());
+                		endUser.setEducationInfo(request.getParameter("education").trim());
 
-                		EnumMap<BusinessCategory, String> userPrefs = new EnumMap<>(BusinessCategory.class);
+                		//EnumMap<BusinessCategory, String> userPrefs = new EnumMap<>(BusinessCategory.class);
+                		EnumMap<BusinessCategory, String> userPrefs = endUser.getUserPrefs();
                 		//Get the user preferences
-                		if (request.getParameter("Travel") != null && !request.getParameter("Travel").equals("")) {
-                			userPrefs.put(BusinessCategory.TRAVEL, request.getParameter("Travel").trim());
+                		if (request.getParameter(BusinessCategory.TRAVEL.name()) != null && !request.getParameter(BusinessCategory.TRAVEL.name()).equals("")) {
+                			userPrefs.put(BusinessCategory.TRAVEL, request.getParameter(BusinessCategory.TRAVEL.name()).trim());
                 		}
-                		if (request.getParameter("Training") != null && !request.getParameter("Training").trim().equals("")) {
-                			userPrefs.put(BusinessCategory.TRAINING,
-                					request.getParameter("Training").trim());
+                		if (request.getParameter(BusinessCategory.TRAINING.name()) != null && !request.getParameter(BusinessCategory.TRAINING.name()).trim().equals("")) {
+                			userPrefs.put(BusinessCategory.TRAINING,request.getParameter(BusinessCategory.TRAINING.name()).trim());
                 		}
-                		if (request.getParameter("Food") != null && !request.getParameter("Food").trim().equals("")) {
-                			userPrefs.put(BusinessCategory.FOOD, request.getParameter("Food").trim());
+                		if (request.getParameter(BusinessCategory.FOOD.name()) != null && !request.getParameter(BusinessCategory.FOOD.name()).trim().equals("")) {
+                			userPrefs.put(BusinessCategory.FOOD, request.getParameter(BusinessCategory.FOOD.name()).trim());
                 		}
-                		if (request.getParameter("Computers") != null && !request.getParameter("Computers").trim().equals("")) {
-                			userPrefs.put(BusinessCategory.COMPUTERS,
-                					request.getParameter("Computers").trim());
+                		if (request.getParameter(BusinessCategory.COMPUTERS.name()) != null && !request.getParameter(BusinessCategory.COMPUTERS.name()).trim().equals("")) {
+                			userPrefs.put(BusinessCategory.COMPUTERS, request.getParameter(BusinessCategory.COMPUTERS.name()).trim());
                 		}
-                		if (request.getParameter("Automobiles") != null
-                				&& !request.getParameter("Automobiles").trim().equals("")) {
-                			userPrefs.put(BusinessCategory.AUTOMOBILES, request.getParameter("Automobiles").trim());
+                		if (request.getParameter(BusinessCategory.AUTOMOBILES.name()) != null && !request.getParameter(BusinessCategory.AUTOMOBILES.name()).trim().equals("")) {
+                			userPrefs.put(BusinessCategory.AUTOMOBILES, request.getParameter(BusinessCategory.AUTOMOBILES.name()).trim());
                 		}
-                		if (request.getParameter("Lifestyle") != null && !request.getParameter("Lifestyle").trim().equals("")) {
-                			userPrefs.put(BusinessCategory.LIFESTYLE, request.getParameter("Lifestyle").trim());
+                		if (request.getParameter(BusinessCategory.LIFESTYLE.name()) != null && !request.getParameter(BusinessCategory.LIFESTYLE.name()).trim().equals("")) {
+                			userPrefs.put(BusinessCategory.LIFESTYLE, request.getParameter(BusinessCategory.LIFESTYLE.name()).trim());
                 		}
-
-                		endUser.setUserPrefs(userPrefs);
-                		
-                		endUserDaoImpl.updateUserProfile(endUser);
+						
+                		//endUser.setUserPrefs(userPrefs);
+                		LogManager.getLogger().info("Prefs set in user profile page: "+endUser.getUserPrefs());
+						if(from.equalsIgnoreCase("signup")){
+							//toggle
+            				from = "login";
+            				session.setAttribute("from", from);
+            				endUserDaoImpl.addUserProfile(endUser);
+                		}else{
+                			endUserDaoImpl.updateUserProfile(endUser);
+                		}
                 	}
                 	
-                	EndUser user = endUserDaoImpl.getEndUserDetailedProfile(username);
-            		session.setAttribute("userCred", user.getUserCredential());
-
+                	EndUser user = null;
+                	if(from.equalsIgnoreCase("signup")){
+                		LogManager.getLogger().info("Signup rendering user profile...");
+                		user = new EndUser();
+                		UserCredential credential = new UserCredential();
+                		credential.setId((Long) session.getAttribute("userId"));
+                		credential.setUsername(username);
+                		user.setUserCredential(credential);
+                		user.setAddress(new Address());
+                		user.setContactInfo(new ContactInfo());
+                		user.setUserPrefs(new EnumMap<BusinessCategory, String>(BusinessCategory.class));
+                	}else{
+                		LogManager.getLogger().info("Login rendering user profile retrieved from DB...");
+                		user = endUserDaoImpl.getEndUserDetailedProfile(username);	
+                	}
+                	endUserDaoImpl.close();
+                	
+            		session.setAttribute("endUser", user);
+					
+            		String name = user.getName() != null ? user.getName() : "";
+            		String dob = user.getDateOfBirth() != null ? DateTimeUtils.getFormattedDate(user.getDateOfBirth()) : "";
+            		out.println("Name : <input name='name' type='text' value='" + name + "' >"
+                			+ "<br/><br/>");
+            		out.println("Birth date (dd/mm/yyyy) : <input name='dob' type='text' value='" + dob + "' >"
+                			+ "<br/><br/>");
+            		
                 	Address address = user.getAddress();
                 	String addressLine1 = address.getRouteOrLane() != null ? address.getRouteOrLane() : "";
                 	String addressLine2 = address.getSublocality() != null ? address.getSublocality() : "";
@@ -150,13 +186,11 @@
                 		if (prefValue == null) {
                 			prefValue = "";
                 		}
-                		out.println("<textarea name='" + categoryName + "' rows='3' cols='50'>" + prefValue
+                		out.println("<textarea name='" + categoryName + "' rows='4' cols='50'>" + prefValue
                 				+ "</textarea><br/><br/>");
                 	}
-                	out.println("<br/><br/>");
-                	out.println("<input type='submit' value='Save'>");
                 	
-                	endUserDaoImpl.close();
+                	out.println("<input type='submit' value='Save'>");
                 %>
                 <br/><br/>
             </form>

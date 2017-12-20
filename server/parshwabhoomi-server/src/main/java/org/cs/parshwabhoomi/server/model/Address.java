@@ -127,5 +127,12 @@ public class Address {
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
-    
+	
+	/**
+	 * 
+	 * @return human readable formatted address.
+	 */
+	public String getFormattedAddress() {
+		return routeOrLane+","+sublocality+","+locality+","+state+","+pincode;
+	}
 }

@@ -14,4 +14,6 @@ import org.cs.parshwabhoomi.server.model.BusinessCategory;
  */
 public interface BusinessCategoryDao {
 	public HashMap<String,BusinessCategory> getCategories();
+	
+	public BusinessCategory getByName(String name);
 }
