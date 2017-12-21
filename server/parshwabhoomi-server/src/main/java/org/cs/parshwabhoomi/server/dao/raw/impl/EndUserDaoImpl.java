@@ -110,10 +110,8 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
             try {
                 statement = connection.createStatement();
                 status = statement.executeUpdate(query);
-                if (status > 0) {
-                	LogManager.getLogger().info("All the previous User Preferences deleted successfully...");
-                    this.addUserPreferences(endUser);
-                }
+                LogManager.getLogger().info("All the previous User Preferences deleted successfully...");
+                addUserPreferences(endUser);
             } catch (SQLException sqle) {
             	LogManager.getLogger().error("Error:Updating the USER PREFS info", sqle);
             } finally {
@@ -132,7 +130,7 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
     //Updates the existing user record & also returns the user id of the record from the users table of the db.
     private int updateBasicUserProfile(EndUser endUser){
         String query = "UPDATE end_users SET route_or_lane=?, sublocality=?, locality=?, state=?, pincode=?, latitude=?, longitude=?, "
-        				+ "primary_mobile=?, secondary_mobile=?, landline=?, email=?, education=?, work=? "
+        				+ "primary_mobile=?, secondary_mobile=?, landline=?, email=?, education=?, work=?, name = ?, dob = ? "
                         +"WHERE user_id=?";
 
         PreparedStatement statement = null;
@@ -153,7 +151,9 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
             statement.setString(11, endUser.getContactInfo().getEmail());
             statement.setString(12, endUser.getEducationInfo());
             statement.setString(13, endUser.getWorkInfo());
-            statement.setLong(14, endUser.getUserCredential().getId());
+            statement.setString(14, endUser.getName());
+            statement.setDate(15, new Date(endUser.getDateOfBirth().getTime()));
+            statement.setLong(16, endUser.getUserCredential().getId());
             
             status = statement.executeUpdate();
             if (status > 0) {
@@ -211,7 +211,9 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
                 endUser.setUserCredential(userCredential);
                 
                 endUser.setName(rs.getString("name"));
-                endUser.setDateOfBirth(new java.util.Date(rs.getDate("dob").getTime()));
+                if(rs.getDate("dob") != null){
+                	endUser.setDateOfBirth(new java.util.Date(rs.getDate("dob").getTime()));
+                }
                 
                 Address address = new Address();
                 address.setLatitude(rs.getString("latitude"));

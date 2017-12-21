@@ -25,6 +25,7 @@ public class SearchResultResponseDTO extends AbstractResponseDTO {
 	//Provider name in case the search result is provided by search engine like Google, Bing, Yahoo etc.
 	private String provider;
 	private String businessCategory;
+	private long vendorId;
 	
 	/**
 	 * @return the title
@@ -170,7 +171,18 @@ public class SearchResultResponseDTO extends AbstractResponseDTO {
 	public void setBusinessCategory(String businessCategory) {
 		this.businessCategory = businessCategory;
 	}
-	
+	/**
+	 * @return the vendorId
+	 */
+	public long getVendorId() {
+		return vendorId;
+	}
+	/**
+	 * @param vendorId the vendorId to set
+	 */
+	public void setVendorId(long vendorId) {
+		this.vendorId = vendorId;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

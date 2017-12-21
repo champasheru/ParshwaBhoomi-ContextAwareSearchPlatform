@@ -36,7 +36,7 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
         String query = "INSERT INTO business_vendors(user_id, name, "
         		+ "route_or_lane, sublocality, locality, state, pincode, "
         		+ "primary_mobile, secondary_mobile, email, landline, "
-        		+ "category_id, advertisement_and_offerings, tagline, latitude, longitude) "
+        		+ "category_id, offerings, tagline, latitude, longitude) "
                 +" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         PreparedStatement statement = null;
@@ -96,7 +96,7 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
         		+ "SET  name = ?, "
         		+ "route_or_lane = ?, sublocality = ?, locality = ?, state = ?, pincode = ?, "
         		+ "primary_mobile = ?, secondary_mobile = ?, email = ?, landline = ?, "
-        		+ "category_id = ?, advertisement_and_offerings = ?, tagline = ?, latitude = ?, longitude = ? "
+        		+ "category_id = ?, offerings = ?, tagline = ?, latitude = ?, longitude = ? "
                 +" WHERE id = ?";
         
         PreparedStatement statement = null;
@@ -153,7 +153,7 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 		LogManager.getLogger().info("Retrieving vendor profile...");
 		
 		String query = "SELECT business_vendors.id as vid, user_creds.id as ucid, role, "
-				+ "category_id, name, route_or_lane, sublocality, locality, state, advertisement_and_offerings, "
+				+ "category_id, name, route_or_lane, sublocality, locality, state, offerings, "
 				+"pincode, latitude, longitude, primary_mobile, secondary_mobile, landline, email, tagline, user_id, "
 				+"categories.id as cid, category_name, category_description "
 				+ "FROM ((business_vendors INNER JOIN user_creds ON user_creds.id = business_vendors.user_id) "
@@ -198,7 +198,7 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 				contactInfo.setSecondaryMobile(rs.getString("secondary_mobile"));
 				vendor.setContactInfo(contactInfo);
 
-				vendor.setOfferings(rs.getString("advertisement_and_offerings"));
+				vendor.setOfferings(rs.getString("offerings"));
 				vendor.setTagLine(rs.getString("tagline"));
 				
 				String catrgoryName = rs.getString("category_name");
@@ -226,4 +226,77 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 		return vendor;
 	}
 
+
+
+	/* (non-Javadoc)
+	 * @see org.cs.parshwabhoomi.server.dao.raw.BusinessVendorDao#getById(java.lang.long)
+	 */
+	@Override
+	public BusinessVendor getById(long id) {
+LogManager.getLogger().info("Retrieving vendor profile...");
+		
+		String query = "SELECT * "
+				+ "FROM business_vendors "
+				+ "WHERE user_id = ?";
+
+		LogManager.getLogger().info("Query:\n" + query);
+
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		BusinessVendor vendor = null;
+		try {
+			prepStmt = connection.prepareStatement(query);
+			prepStmt.setLong(1, id);
+			rs = prepStmt.executeQuery();
+			if (rs.next()) {
+				vendor = new BusinessVendor();
+				
+				vendor.setId(id);
+				vendor.setName(rs.getString("name"));
+				
+				Address address = new Address();
+				address.setLatitude(rs.getString("latitude"));
+				address.setLongitude(rs.getString("longitude"));
+				address.setRouteOrLane(rs.getString("route_or_lane"));
+				address.setSublocality(rs.getString("sublocality"));
+				address.setLocality(rs.getString("locality"));
+				address.setState(rs.getString("state"));
+				address.setPincode(rs.getString("pincode"));
+				vendor.setAddress(address);
+
+				ContactInfo contactInfo = new ContactInfo();
+				contactInfo.setEmail(rs.getString("email"));
+				contactInfo.setLandline(rs.getString("landline"));
+				contactInfo.setPrimaryMobile(rs.getString("primary_mobile"));
+				contactInfo.setSecondaryMobile(rs.getString("secondary_mobile"));
+				vendor.setContactInfo(contactInfo);
+
+				vendor.setOfferings(rs.getString("offerings"));
+				vendor.setTagLine(rs.getString("tagline"));
+				
+				String catrgoryName = rs.getString("category_name");
+				if(catrgoryName != null){
+					BusinessCategory bc = BusinessCategory.valueOf(rs.getString("category_name"));
+					bc.setId(rs.getLong("cid"));
+					vendor.setBusinessCategory(bc);
+				}
+			}
+		} catch (SQLException sqle) {
+			LogManager.getLogger().error("Error:retrieving vendor profile",  sqle);
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if(connection != null){
+					connection.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return vendor;
+	}
+	
 }

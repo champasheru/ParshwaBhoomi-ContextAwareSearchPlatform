@@ -18,4 +18,6 @@ public interface BusinessVendorDao {
 	public int update(BusinessVendor businessVendor);
 	
 	public BusinessVendor getByUsername(String username);
+	
+	public BusinessVendor getById(long id);
 }
