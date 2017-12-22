@@ -40,7 +40,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 					metadata = new JsonEventMetadata();
 					metadata.setKey(key);
 					stack.push(metadata);
-					LogManager.getLogger().info("Processing key: "+key);
+					//LogManager.getLogger().info("Processing key: "+key);
 					break;
 					
 				case VALUE_FALSE:
@@ -54,7 +54,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 				case START_ARRAY:
 					if(stack.isEmpty()){
 						//Json started with an array.
-						LogManager.getLogger().info("Empty stack; parser initialized with an Array!");
+						//LogManager.getLogger().info("Empty stack; parser initialized with an Array!");
 					}else{
 						metadata = stack.peek();
 						metadata.setJsonValueType(JsonValueType.JSON_VALUE_TYPE_ARRAY);
@@ -64,7 +64,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 								if(searchResult != null){
 									results.add(searchResult);
 								}
-								LogManager.getLogger().info("Search results parsed so far: "+results.size());
+//								LogManager.getLogger().info("Search results parsed so far: "+results.size());
 							}
 						}
 					}
@@ -79,13 +79,13 @@ public class GoogleSearchResultResponseDTOAdapter {
 				case START_OBJECT:
 					if(stack.isEmpty()){
 						//Json started with an object.
-						LogManager.getLogger().info("Empty stack; parser initialized with Object!");
+//						LogManager.getLogger().info("Empty stack; parser initialized with Object!");
 					}else{
 						metadata = stack.peek();
 						//Remember by the time, following is to be decided, if the object was part of an array the start_array event has been processed by now.
 						if(metadata.getJsonValueType() == JsonValueType.JSON_VALUE_TYPE_ARRAY){
-							LogManager.getLogger().info("Object found inside an array; so it's an anonymous object i.e. one w/o associated key!");
-							LogManager.getLogger().info("Not pushing an entry on the stack");
+//							LogManager.getLogger().info("Object found inside an array; so it's an anonymous object i.e. one w/o associated key!");
+//							LogManager.getLogger().info("Not pushing an entry on the stack");
 						}else{
 							metadata.setJsonValueType(JsonValueType.JSON_VALUE_TYPE_OBJECT);
 						}
@@ -103,7 +103,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 					break;
 					
 				default:
-					LogManager.getLogger().info("Finished processing an event");
+//					LogManager.getLogger().info("Finished processing an event");
 					break;
 			}
 		}
@@ -115,7 +115,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 	
 	
 	private SearchResult parseSingleJsonObject(JsonParser parser){
-		LogManager.getLogger().info("** Parsing single search result...");
+//		LogManager.getLogger().info("** Parsing single search result...");
 		
 		SearchResult searchResult = null;
 		
@@ -132,7 +132,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 					metadata = new JsonEventMetadata();
 					metadata.setKey(key);
 					stack.push(metadata);
-					LogManager.getLogger().info("Processing key with name: "+key);
+//					LogManager.getLogger().info("Processing key with name: "+key);
 					break;
 					
 				case VALUE_FALSE:
@@ -155,31 +155,31 @@ public class GoogleSearchResultResponseDTOAdapter {
 					break;
 					
 				case END_ARRAY:
-					LogManager.getLogger().info("Finished processing an array...");
+//					LogManager.getLogger().info("Finished processing an array...");
 					if(stack.peek().getKey().equalsIgnoreCase("items")){
 						//Hack: problem is - items array end event is encountered here; so need to detect and exit cleanly ;(
-						LogManager.getLogger().info("Finished consuming all items...");
+//						LogManager.getLogger().info("Finished consuming all items...");
 						itemsConsumed = true;
 						stack.pop();
 						return searchResult;
 					}
 					
 					stack.pop();
-					LogManager.getLogger().info("Stack snapshot @ array end: "+stack);
+//					LogManager.getLogger().info("Stack snapshot @ array end: "+stack);
 					break;
 					
 				case START_OBJECT:
-					LogManager.getLogger().info("Starting to process new object...");
-					LogManager.getLogger().info("Stack snapshot @ obj start: "+stack);
+//					LogManager.getLogger().info("Starting to process new object...");
+//					LogManager.getLogger().info("Stack snapshot @ obj start: "+stack);
 					
 					metadata = stack.peek();
 					//Remember by the time, following is to be decided, if the object was part of an array the start_array event has been processed by now.
 					if(metadata.getJsonValueType() == JsonValueType.JSON_VALUE_TYPE_ARRAY){
-						LogManager.getLogger().info("Object found inside an array; so it's an anonymous object i.e. one w/o associated key!");
-						LogManager.getLogger().info("Not pushing an entry on the stack");
+//						LogManager.getLogger().info("Object found inside an array; so it's an anonymous object i.e. one w/o associated key!");
+//						LogManager.getLogger().info("Not pushing an entry on the stack");
 						
 						if(metadata.getKey().equalsIgnoreCase("items")){
-							LogManager.getLogger().info("Starting to process new Search Result Item object...");
+//							LogManager.getLogger().info("Starting to process new Search Result Item object...");
 							searchResult = new SearchResult();
 							searchResult.setProvider(Provider.SEARCH_PROVIDER_GOOGLE);
 						}
@@ -190,14 +190,14 @@ public class GoogleSearchResultResponseDTOAdapter {
 					break;
 					
 				case END_OBJECT:
-					LogManager.getLogger().info("Finished processing an object...");
-					LogManager.getLogger().info("Stack snapshot @ obj end: "+stack);
-					LogManager.getLogger().info("Decide object value type: pop only if value type is object else dont because it's an array_object!");
+//					LogManager.getLogger().info("Finished processing an object...");
+//					LogManager.getLogger().info("Stack snapshot @ obj end: "+stack);
+//					LogManager.getLogger().info("Decide object value type: pop only if value type is object else dont because it's an array_object!");
 					
 					metadata = stack.peek();
 					if(metadata.getJsonValueType() == JsonValueType.JSON_VALUE_TYPE_ARRAY){
 						if(metadata.getKey().equalsIgnoreCase("items")){
-							LogManager.getLogger().info("Finished processing new Search Result Item object...");
+//							LogManager.getLogger().info("Finished processing new Search Result Item object...");
 							keepParsing = false;
 						}
 					}else{
@@ -207,12 +207,12 @@ public class GoogleSearchResultResponseDTOAdapter {
 					break;
 					
 				default:
-					LogManager.getLogger().info("Finished processing an event");
+//					LogManager.getLogger().info("Finished processing an event");
 					break;
 			}
 		}
 		
-		LogManager.getLogger().info("Finished parsing single search result **");
+//		LogManager.getLogger().info("Finished parsing single search result **");
 		return searchResult;
 	}
 	

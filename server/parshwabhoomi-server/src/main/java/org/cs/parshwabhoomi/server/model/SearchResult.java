@@ -24,7 +24,9 @@ public class SearchResult {
 	public enum Type{
 		//Result served by Parshwabhoomi platform based on user preferences and matching corresponding business entities in the given locality/geo-fence.   
 		TYPE_PB_PREFERRED,
-		//Result served by Parshwabhoomi platform that matches the search term against registering business entities in the given locality/geo-fence but w/o
+		//Result served by Parshwabhoomi platform based on user preferences and matching corresponding business entities that fall outside the given locality/geo-fence.   
+		TYPE_PB_PREFERRED_LOCATION,
+		//Result served by Parshwabhoomi platform that matches the search term against registeres business entities in the given locality/geo-fence but w/o
 		//the user preferences.
 		TYPE_PB_LOCATION,
 		//Result served by Parshwabhoomi platform that matches the search term against all the registered business entities w/o considering locality/geo-fence &
@@ -47,6 +49,11 @@ public class SearchResult {
     private Provider provider;
     
     private String title;
+    /**
+     * The one liner for the business vendor being served.
+     * This is applicable only when the search result type is PB: preferred, location, and general.
+     */
+    private String tagline;
     private String htmlTitle;
     private String link;
     private String displayLink;
@@ -56,14 +63,26 @@ public class SearchResult {
     private String htmlFormattedUrl;
     private String imageUrl;
     /**
+     * The id of the local business vendor.
+     * This is applicable only when the search result type is PB: preferred, location, and general. 
+     */
+    private String vendorID;
+    /**
      * The business category/classfication name under which the local vendor falls.
      * This is applicable only when the search result type is PB: preferred, location, and general. 
      */
-    
-    private String category;
-    
+    private BusinessCategory category;
+    /**
+     * Vendor address
+     * This is applicable only when the search result type is PB: preferred, location, and general.
+     */
     private Address address;
+    /**
+     * Vendor contact info
+     * This is applicable only when the search result type is PB: preferred, location, and general.
+     */
     private ContactInfo contactInfo;
+    
 	/**
 	 * @return the type
 	 */
@@ -223,13 +242,37 @@ public class SearchResult {
 	/**
 	 * @return the category
 	 */
-	public String getCategory() {
+	public BusinessCategory getCategory() {
 		return category;
 	}
 	/**
 	 * @param category the category to set
 	 */
-	public void setCategory(String category) {
+	public void setCategory(BusinessCategory category) {
 		this.category = category;
+	}
+	/**
+	 * @return the tagline
+	 */
+	public String getTagline() {
+		return tagline;
+	}
+	/**
+	 * @param tagline the tagline to set
+	 */
+	public void setTagline(String tagline) {
+		this.tagline = tagline;
+	}
+	/**
+	 * @return the vendorID
+	 */
+	public String getVendorID() {
+		return vendorID;
+	}
+	/**
+	 * @param vendorID the vendorID to set
+	 */
+	public void setVendorID(String vendorID) {
+		this.vendorID = vendorID;
 	}
 }

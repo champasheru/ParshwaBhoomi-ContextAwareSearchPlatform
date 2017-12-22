@@ -8,6 +8,8 @@ package org.cs.parshwabhoomi.server.dao.raw.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.dao.AbstractRawDao;
@@ -160,8 +162,6 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 				+"INNER JOIN categories ON categories.id = business_vendors.category_id) "
 				+ "WHERE username = ?";
 
-		LogManager.getLogger().info("Query:\n" + query);
-
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		BusinessVendor vendor = null;
@@ -215,9 +215,6 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 				if (rs != null) {
 					rs.close();
 				}
-				if(connection != null){
-					connection.close();
-				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -233,13 +230,12 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 	 */
 	@Override
 	public BusinessVendor getById(long id) {
-LogManager.getLogger().info("Retrieving vendor profile...");
+		LogManager.getLogger().info("Retrieving vendor profile...");
 		
-		String query = "SELECT * "
-				+ "FROM business_vendors "
-				+ "WHERE user_id = ?";
-
-		LogManager.getLogger().info("Query:\n" + query);
+		String query = "SELECT business_vendors.*, category_name, category_description "
+				+ "FROM business_vendors, categories "
+				+ "WHERE user_id = ? "
+				+"and business_vendors.category_id = categories.id";
 
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -277,7 +273,8 @@ LogManager.getLogger().info("Retrieving vendor profile...");
 				String catrgoryName = rs.getString("category_name");
 				if(catrgoryName != null){
 					BusinessCategory bc = BusinessCategory.valueOf(rs.getString("category_name"));
-					bc.setId(rs.getLong("cid"));
+					bc.setId(rs.getLong("category_id"));
+					bc.setDescription(rs.getString("category_description"));
 					vendor.setBusinessCategory(bc);
 				}
 			}
@@ -288,9 +285,6 @@ LogManager.getLogger().info("Retrieving vendor profile...");
 				if (rs != null) {
 					rs.close();
 				}
-				if(connection != null){
-					connection.close();
-				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -298,5 +292,75 @@ LogManager.getLogger().info("Retrieving vendor profile...");
 
 		return vendor;
 	}
-	
+
+
+
+	/* (non-Javadoc)
+	 * @see org.cs.parshwabhoomi.server.dao.raw.BusinessVendorDao#getAll()
+	 */
+	@Override
+	public List<BusinessVendor> getAll() {
+		LogManager.getLogger().info("Retrieving all vendors...");
+		
+		List<BusinessVendor> vendors = new ArrayList<>();
+		String query = "SELECT business_vendors.*, category_name FROM business_vendors "
+				+ "INNER JOIN categories ON business_vendors.category_id = categories.id";
+		
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		try {
+			prepStmt = connection.prepareStatement(query);
+			rs = prepStmt.executeQuery();
+			while(rs.next()) {
+				BusinessVendor vendor = new BusinessVendor();
+				
+				vendor.setId(rs.getLong("id"));
+				vendor.setName(rs.getString("name"));
+				
+				Address address = new Address();
+				address.setLatitude(rs.getString("latitude"));
+				address.setLongitude(rs.getString("longitude"));
+				address.setRouteOrLane(rs.getString("route_or_lane"));
+				address.setSublocality(rs.getString("sublocality"));
+				address.setLocality(rs.getString("locality"));
+				address.setState(rs.getString("state"));
+				address.setPincode(rs.getString("pincode"));
+				vendor.setAddress(address);
+
+				ContactInfo contactInfo = new ContactInfo();
+				contactInfo.setEmail(rs.getString("email"));
+				contactInfo.setLandline(rs.getString("landline"));
+				contactInfo.setPrimaryMobile(rs.getString("primary_mobile"));
+				contactInfo.setSecondaryMobile(rs.getString("secondary_mobile"));
+				vendor.setContactInfo(contactInfo);
+
+				vendor.setOfferings(rs.getString("offerings"));
+				vendor.setTagLine(rs.getString("tagline"));
+				
+				String catrgoryName = rs.getString("category_name");
+				if(catrgoryName != null){
+					BusinessCategory bc = BusinessCategory.valueOf(rs.getString("category_name"));
+					bc.setId(rs.getLong("category_id"));
+					vendor.setBusinessCategory(bc);
+				}
+				
+				vendors.add(vendor);
+			}
+		} catch (SQLException sqle) {
+			LogManager.getLogger().error("Error:retrieving all vendors",  sqle);
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		LogManager.getLogger().info("Num vendors found:"+vendors.size());
+		
+		return vendors;
+	}
+
 }

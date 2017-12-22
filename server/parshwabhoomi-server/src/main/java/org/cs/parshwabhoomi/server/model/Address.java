@@ -133,6 +133,6 @@ public class Address {
 	 * @return human readable formatted address.
 	 */
 	public String getFormattedAddress() {
-		return routeOrLane+" ,"+sublocality+" ,"+locality+" ,"+state+" ,"+pincode;
+		return routeOrLane+", "+sublocality+", "+locality+", "+state+", "+pincode;
 	}
 }

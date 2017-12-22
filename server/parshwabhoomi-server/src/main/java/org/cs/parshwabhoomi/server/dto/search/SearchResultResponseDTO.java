@@ -12,6 +12,7 @@ import org.cs.parshwabhoomi.server.dto.AbstractResponseDTO;
  */
 public class SearchResultResponseDTO extends AbstractResponseDTO {
 	private String title;
+	private String tagline;
 	private String htmlTitle;
 	private String link;
 	private String displayLink;
@@ -25,7 +26,7 @@ public class SearchResultResponseDTO extends AbstractResponseDTO {
 	//Provider name in case the search result is provided by search engine like Google, Bing, Yahoo etc.
 	private String provider;
 	private String businessCategory;
-	private long vendorId;
+	private String vendorId;
 	
 	/**
 	 * @return the title
@@ -174,14 +175,26 @@ public class SearchResultResponseDTO extends AbstractResponseDTO {
 	/**
 	 * @return the vendorId
 	 */
-	public long getVendorId() {
+	public String getVendorId() {
 		return vendorId;
 	}
 	/**
 	 * @param vendorId the vendorId to set
 	 */
-	public void setVendorId(long vendorId) {
+	public void setVendorId(String vendorId) {
 		this.vendorId = vendorId;
+	}
+	/**
+	 * @return the tagline
+	 */
+	public String getTagline() {
+		return tagline;
+	}
+	/**
+	 * @param tagline the tagline to set
+	 */
+	public void setTagline(String tagline) {
+		this.tagline = tagline;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -8,13 +8,10 @@ package org.cs.parshwabhoomi.server.test;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
-import org.cs.parshwabhoomi.server.core.GoogleMapsService;
-import org.cs.parshwabhoomi.server.core.SearchAggregator;
-import org.cs.parshwabhoomi.server.core.SearchAggregatorImpl;
-import org.cs.parshwabhoomi.server.model.SearchContext;
+import org.cs.parshwabhoomi.server.AppContext;
+import org.cs.parshwabhoomi.server.dao.raw.impl.SearchDaoImpl;
 import org.cs.parshwabhoomi.server.model.SearchResult;
-import org.cs.parshwabhoomi.server.model.UserCredential;
-import org.cs.parshwabhoomi.server.model.UserCredential.Role;
+
 
 /**
  *
@@ -28,9 +25,28 @@ public class Main {
      */
 	
     public static void main(String[] args) {
-    	GoogleMapsService mapsService = new GoogleMapsService();
-    	List<Float> latLng = mapsService.getGeocodedAddress("English Medium School, Rukmini Nagar, Pandharpur");
-    	LogManager.getLogger().info("Lat long = "+latLng);
+    	SearchDaoImpl searchDaoImpl = (SearchDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("SearchDaoImpl");
+     	List<SearchResult> results = searchDaoImpl.findByMatchingUserPref("apple", "saurabh");
+     	LogManager.getLogger().info("Results found by matching user prefs= "+results.size());
+     	results = searchDaoImpl.findByMatchingVendorOfferings("apple", "saurabh");
+     	LogManager.getLogger().info("Results found by matching vendor offerings = "+results.size());
+     	
+     	List<String>modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingUserPref("apple", "saurabh");
+     	LogManager.getLogger().info("Modified search terms found by matching user prefs= "+modifiedSearchTerms.size());
+     	modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingUserPrefCategory("apple", "saurabh");
+     	LogManager.getLogger().info("Modified search terms found by matching user prefs category= "+modifiedSearchTerms.size());
+     	modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingVendorOfferingsCategory("apple", "saurabh");
+     	LogManager.getLogger().info("Modified search terms found by matching vendor offerings category= "+modifiedSearchTerms.size());
+     	searchDaoImpl.close();
+     	
+//    	Geofencer selector = new Geofencer((float)17.6759587, (float)75.3148885);
+//    	BusinessVendorDaoImpl businessVendorDaoImpl = (BusinessVendorDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("BusinessVendorDaoImpl");
+//    	List<BusinessVendor> vendors = businessVendorDaoImpl.getAll();
+//    	vendors = selector.findWithinRadius(vendors);
+    	
+//    	GoogleMapsService mapsService = new GoogleMapsService();
+//    	List<Float> latLng = mapsService.getGeocodedAddress("English Medium School, Rukmini Nagar, Pandharpur");
+//    	LogManager.getLogger().info("Lat long = "+latLng);
     	
 //    	SearchAggregator searchAggregator = new SearchAggregatorImpl();
 //    	UserCredential userCredential = new UserCredential();

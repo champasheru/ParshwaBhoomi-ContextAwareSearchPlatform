@@ -5,6 +5,8 @@
  */
 package org.cs.parshwabhoomi.server.dao.raw;
 
+import java.util.List;
+
 import org.cs.parshwabhoomi.server.model.BusinessVendor;
 
 /**
@@ -20,4 +22,6 @@ public interface BusinessVendorDao {
 	public BusinessVendor getByUsername(String username);
 	
 	public BusinessVendor getById(long id);
+	
+	public List<BusinessVendor> getAll();
 }

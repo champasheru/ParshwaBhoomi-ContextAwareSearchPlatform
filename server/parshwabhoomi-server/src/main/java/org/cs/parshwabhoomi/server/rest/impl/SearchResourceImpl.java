@@ -32,24 +32,29 @@ import org.cs.parshwabhoomi.server.utils.RestUtils;
  */
 @Path("/search")
 public class SearchResourceImpl extends AbstractResource implements SearchResource {
+	public static final String VENDOR_PROFILE_URL = "AdsOfferings.jsp?vendorId=";
 
 	/* (non-Javadoc)
 	 * @see org.cs.parshwabhoomi.server.rest.SearchResource#search(org.cs.parshwabhoomi.server.dto.impl.SearchRequestDTO)
 	 */
 	@Override
 	public Response search(SearchRequestDTO requestDTO) {
-//		LogManager.getLogger().info("Auth scheme: "+getSecurityContext().getAuthenticationScheme());
-//		LogManager.getLogger().info("Auth name: "+getSecurityContext().getUserPrincipal().getName());
+		LogManager.getLogger().info("About to start searching using user search context...");
 		
 		Response response = null;
 		try{
+			String baseUrl = getUriInfo().getRequestUri().toString();
+			baseUrl = baseUrl.substring(0, baseUrl.indexOf("/v1")+1); 
+			baseUrl += VENDOR_PROFILE_URL;
+			LogManager.getLogger().info("Base url="+baseUrl);
+			
 			SearchRquestDTOAdapter adapter = new SearchRquestDTOAdapter();
 			SearchContext context = adapter.buildRequest(requestDTO);
 			
 			SearchAggregator aggregator = new SearchAggregatorImpl();
 			List<SearchResult> searchResults = aggregator.getResults(context);
-
-			SearchResultResponseDTOAdapter responseDTOAdapter = new SearchResultResponseDTOAdapter();
+			
+			SearchResultResponseDTOAdapter responseDTOAdapter = new SearchResultResponseDTOAdapter(baseUrl);
 			List<SearchResultResponseDTO> dtos = responseDTOAdapter.buildResponse(searchResults);
 			GenericEntity<List<SearchResultResponseDTO>> gsr = new GenericEntity<List<SearchResultResponseDTO>>(dtos){};
 			response = Response.ok(gsr).build();
@@ -61,6 +66,5 @@ public class SearchResourceImpl extends AbstractResource implements SearchResour
 		
 		return response;
 	}
-	
 
 }
