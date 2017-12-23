@@ -44,12 +44,14 @@ public class GoogleMapsAddressResponseDTOAdapter {
             for(int i= 0; i < addressComponents.length(); i++){
                 JSONArray addressTypes = addressComponents.getJSONObject(i).getJSONArray("types");
                 for(int j = 0; j < addressTypes.length(); j++){
-                    if(addressTypes.getString(j).equalsIgnoreCase("premise")){
+                	String addressType = addressTypes.getString(j);
+                    if(addressType.equalsIgnoreCase("premise") || addressType.equalsIgnoreCase("route") || addressType.equalsIgnoreCase("neighborhood")){
                         //LogManager.getLogger().info("premise = "+addressComponents.getJSONObject(i).getString("long_name"));
-                        address.setPremise(addressComponents.getJSONObject(i).getString("long_name"));
-                    }else if(addressTypes.getString(j).equalsIgnoreCase("route")){
-                        //LogManager.getLogger().info("route = "+addressComponents.getJSONObject(i).getString("long_name"));
-                        address.setRouteOrLane(addressComponents.getJSONObject(i).getString("long_name"));
+                    	if(address.getRouteOrLane() != null){
+                    		address.setRouteOrLane(address.getRouteOrLane()+", "+addressComponents.getJSONObject(i).getString("long_name"));
+                    	}else{
+                    		address.setRouteOrLane(addressComponents.getJSONObject(i).getString("long_name"));
+                    	}
                     }else if(addressTypes.getString(j).equalsIgnoreCase("sublocality")){
                     	//LogManager.getLogger().info("sublocality = "+addressComponents.getJSONObject(i).getString("long_name"));
                     	if(address.getSublocality() != null){

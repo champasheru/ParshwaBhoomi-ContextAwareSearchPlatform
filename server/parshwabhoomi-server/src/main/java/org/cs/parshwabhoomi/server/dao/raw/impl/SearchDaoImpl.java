@@ -102,7 +102,7 @@ public class SearchDaoImpl extends AbstractRawDao implements SearchDao {
 	@Override
 	public List<SearchResult> findByMatchingVendorOfferings(String searchKeyword, String username) {
 		String query = "SELECT business_vendors.user_id as bvid, name, tagline, offerings, category_name, "
-				+ "route_or_lane, sublocality, locality, state, pincode, latitude, longitude"
+				+ "route_or_lane, sublocality, locality, state, pincode, latitude, longitude, "
 				+ "primary_mobile, secondary_mobile, landline, email "
                 +"FROM business_vendors, categories, user_creds " 
                 +"WHERE lower(offerings) like lower(?) "

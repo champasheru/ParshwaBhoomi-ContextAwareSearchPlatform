@@ -14,6 +14,10 @@ public class RestUtils {
 		
 	}
 	
+	public static ErrorResponseDTO createInternalServerErrorResponseDTO(){
+		return RestUtils.createErrorResponseDTO(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR, "Couldn't fulfill request right now. Please try again!");
+	}
+	
 	public static ErrorResponseDTO createForbiddenResponseDTO(){
 		return RestUtils.createErrorResponseDTO(HTTP_STATUS_CODE.FORBIDDEN, "Forbidden! Invalid access!");
 	}

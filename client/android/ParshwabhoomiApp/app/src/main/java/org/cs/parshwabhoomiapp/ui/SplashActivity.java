@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import org.cs.parshwabhoomiapp.R;
 
-public class Splash extends Activity 
+public class SplashActivity extends Activity
 {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -19,7 +19,7 @@ public class Splash extends Activity
 		
 	}
 	
-	/* Display Login Screen. */
+	/* Display LoginActivity Screen. */
 	public void displayLoginScreen()
 	{
 		new Thread()
@@ -32,7 +32,7 @@ public class Splash extends Activity
 					
 					Intent i = new Intent();
 					
-					i.setClassName(Splash.this, org.cs.parshwabhoomiapp.ui.Login.class.getName());
+					i.setClassName(SplashActivity.this, LoginActivity.class.getName());
 					
 					startActivityForResult(i, 0);
 					

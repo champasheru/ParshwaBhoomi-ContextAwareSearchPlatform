@@ -12,9 +12,11 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.AppContext;
 import org.cs.parshwabhoomi.server.dao.raw.impl.UserCredentialDaoImpl;
+import org.cs.parshwabhoomi.server.dto.ErrorResponseDTO;
 import org.cs.parshwabhoomi.server.dto.auth.UserLoginRequestDTO;
 import org.cs.parshwabhoomi.server.rest.AbstractResource;
 import org.cs.parshwabhoomi.server.rest.UserResource;
+import org.cs.parshwabhoomi.server.utils.RestUtils;
 
 /**
  * @author gayatri
@@ -30,10 +32,28 @@ public class UserResourceImpl extends AbstractResource implements UserResource {
 	@Override
 	public Response login(UserLoginRequestDTO loginRequestDTO) {
 		LogManager.getLogger().info("Validating UserCredential Login: "+loginRequestDTO.getUsername());
-		UserCredentialDaoImpl userCredentialDaoImpl = (UserCredentialDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("UserCredentialDaoImpl");
-		boolean isValid = userCredentialDaoImpl.isValidUser(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
-		userCredentialDaoImpl.close();
-		Response response = isValid ? Response.ok().build() : Response.status(Status.UNAUTHORIZED).build();
+		
+		Response response = null;
+		UserCredentialDaoImpl userCredentialDaoImpl = null;
+		try{
+			userCredentialDaoImpl = (UserCredentialDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("UserCredentialDaoImpl");
+			boolean isValid = userCredentialDaoImpl.isValidUser(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
+			userCredentialDaoImpl.close();
+			if(isValid){
+				response = Response.ok().build();
+			}else{
+				ErrorResponseDTO dto = RestUtils.createUnauthorizedResponseDTO();
+				response = Response.status(Status.UNAUTHORIZED).entity(dto).build();
+			}
+		}catch(Exception e){
+			ErrorResponseDTO dto = RestUtils.createInternalServerErrorResponseDTO();
+			response = Response.status(Status.UNAUTHORIZED).entity(dto).build();
+		}finally {
+			if(userCredentialDaoImpl != null){
+				userCredentialDaoImpl.close();
+			}
+		}
+		
 		return response;
 	}
 }
