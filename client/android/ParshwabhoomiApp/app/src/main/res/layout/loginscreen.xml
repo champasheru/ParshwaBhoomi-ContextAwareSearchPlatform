@@ -77,7 +77,8 @@ android:id="@+id/loginbtn"
 android:layout_width="wrap_content"	
 android:layout_height="wrap_content"
 android:text="@string/loginButton"
-android:background="#2255FB"
+    android:textColor="#FFFFFF"
+android:background="#8989FB"
 android:layout_marginTop="20dp"
 />
 </TableRow>

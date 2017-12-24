@@ -38,16 +38,18 @@ public class UserResourceImpl extends AbstractResource implements UserResource {
 		try{
 			userCredentialDaoImpl = (UserCredentialDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("UserCredentialDaoImpl");
 			boolean isValid = userCredentialDaoImpl.isValidUser(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
-			userCredentialDaoImpl.close();
+			LogManager.getLogger().info("isValid: "+isValid);
+			
 			if(isValid){
 				response = Response.ok().build();
 			}else{
 				ErrorResponseDTO dto = RestUtils.createUnauthorizedResponseDTO();
 				response = Response.status(Status.UNAUTHORIZED).entity(dto).build();
 			}
-		}catch(Exception e){
+		}catch(Exception e){														
+			LogManager.getLogger().error("Couldn't login: ", e);
 			ErrorResponseDTO dto = RestUtils.createInternalServerErrorResponseDTO();
-			response = Response.status(Status.UNAUTHORIZED).entity(dto).build();
+			response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(dto).build();
 		}finally {
 			if(userCredentialDaoImpl != null){
 				userCredentialDaoImpl.close();

@@ -114,9 +114,11 @@ public class SearchActivity extends Activity implements OnClickListener {
 					RecognizerIntent.EXTRA_RESULTS);
 			Log.i(TAG, "Recognized terms="+results);
 			String spokenText = results.get(0);
-			Log.i(TAG, "1st term="+results.get(0));
+			Log.i(TAG, "1st term=" + results.get(0));
 			// Do something with spokenText
-			searchBox.setText(results.toString());
+			spokenText = results.toString().replace("[", "");
+			spokenText = spokenText.replace("]", "");
+			searchBox.setText(spokenText);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

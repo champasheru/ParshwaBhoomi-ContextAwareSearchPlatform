@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.logging.LogManager;
 
 /**
  * @author gayatri
@@ -102,6 +103,7 @@ public class DefaultRESTClient extends AbstractRESTClient {
 	@Override
 	public InputStream getInputStream() throws IOException {
 		if(isConnected && !inputStreamInUse){
+			Log.i(TAG, "connection.inputStream="+connection.getInputStream());
 			return connection.getInputStream();
 		}
 		throw new IOException("Couldn't open input stream: input stream already marked for use or connection is in invaid state!");
