@@ -82,7 +82,7 @@ public class UserCredentialDaoImpl extends AbstractRawDao implements UserCredent
                 }
             }
         } catch (SQLException sqle) {
-        	LogManager.getLogger().error("Error:retrieving user creds!", sqle);
+            LogManager.getLogger().error("Error:validating user", sqle);
         } finally {
         	try {
         		if(statement != null){

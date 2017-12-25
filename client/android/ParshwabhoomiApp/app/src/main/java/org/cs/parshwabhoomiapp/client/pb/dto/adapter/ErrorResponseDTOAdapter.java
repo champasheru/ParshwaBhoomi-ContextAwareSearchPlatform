@@ -1,6 +1,7 @@
 package org.cs.parshwabhoomiapp.client.pb.dto.adapter;
 
 import android.util.JsonReader;
+import android.util.Log;
 
 import org.cs.parshwabhoomiapp.client.pb.dto.ErrorResponseDTO;
 
@@ -13,7 +14,9 @@ import java.io.InputStreamReader;
  */
 
 public class ErrorResponseDTOAdapter {
+    public static final String TAG = ErrorResponseDTOAdapter.class.getSimpleName();
     public ErrorResponseDTO fromJson(InputStream inputStream){
+        Log.i(TAG, "Reading error dto from JSON");
         JsonReader jsonReader = null;
         try {
             jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
