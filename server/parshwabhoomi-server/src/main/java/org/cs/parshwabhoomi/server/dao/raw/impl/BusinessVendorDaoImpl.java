@@ -149,7 +149,6 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 	}
 
 
-
 	@Override
 	public BusinessVendor getByUsername(String username) {
 		LogManager.getLogger().info("Retrieving vendor profile...");
@@ -212,11 +211,11 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 			LogManager.getLogger().error("Error:retrieving vendor profile",  sqle);
 		} finally {
 			try {
-				if (rs != null) {
-					rs.close();
+				if (prepStmt != null) {
+					prepStmt.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogManager.getLogger().error("Error:retrieving vendor profile",  e);
 			}
 		}
 
@@ -282,11 +281,11 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 			LogManager.getLogger().error("Error:retrieving vendor profile",  sqle);
 		} finally {
 			try {
-				if (rs != null) {
-					rs.close();
+				if (prepStmt != null) {
+					prepStmt.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogManager.getLogger().error("Error:retrieving vendor profile",  e);
 			}
 		}
 
@@ -350,11 +349,11 @@ public class BusinessVendorDaoImpl extends AbstractRawDao implements BusinessVen
 			LogManager.getLogger().error("Error:retrieving all vendors",  sqle);
 		} finally {
 			try {
-				if (rs != null) {
-					rs.close();
+				if (prepStmt != null) {
+					prepStmt.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogManager.getLogger().error("Error:retrieving all vendors",  e);
 			}
 		}
 		

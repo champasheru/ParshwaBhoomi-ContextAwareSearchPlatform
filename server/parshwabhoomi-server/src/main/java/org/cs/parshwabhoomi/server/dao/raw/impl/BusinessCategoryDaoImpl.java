@@ -50,17 +50,14 @@ public class BusinessCategoryDaoImpl extends AbstractRawDao implements BusinessC
                 }
             }
         } catch (SQLException sqle) {
-        	LogManager.getLogger().error("__Error:retrieving categories", sqle);
+        	LogManager.getLogger().error("Error:retrieving categories", sqle);
         } finally {
 			try {
-				if (rs != null) {
-					rs.close();
-				}
 				if (statement != null) {
 					statement.close();
 				}
 			} catch (SQLException e) {
-				LogManager.getLogger().error("__Error:retrieving categories", e);
+				LogManager.getLogger().error("Error:retrieving categories", e);
 			}
         }
         
@@ -93,9 +90,6 @@ public class BusinessCategoryDaoImpl extends AbstractRawDao implements BusinessC
         	LogManager.getLogger().error("Error:retrieving category with name: "+name, sqle);
         } finally {
 			try {
-				if (rs != null) {
-					rs.close();
-				}
 				if (statement != null) {
 					statement.close();
 				}

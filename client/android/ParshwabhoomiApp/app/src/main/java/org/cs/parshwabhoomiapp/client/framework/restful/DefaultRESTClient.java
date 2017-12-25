@@ -24,10 +24,7 @@ public class DefaultRESTClient extends AbstractRESTClient {
 	public static final String TAG = DefaultRESTClient.class.getSimpleName();
 	private HttpURLConnection connection;
 	private boolean isConnected = false;
-	private boolean outputStreamInUse = false;
-	private boolean inputStreamInUse = false;
-	private RESTRequest currentRequest;
-	
+
 	/* (non-Javadoc)
 	 * @see org.cs.parshwabhoomi.server.restclient.RESTClient#connect(org.cs.parshwabhoomi.server.restclient.RESTRequest)
 	 */
@@ -36,8 +33,6 @@ public class DefaultRESTClient extends AbstractRESTClient {
 		Log.i(TAG, "Executing request: "+restRequest.getUrl());
 		Log.i(TAG, "Request method: "+restRequest.getMethod());
 		Log.i(TAG, "Request content type: "+restRequest.getContentType());
-
-		currentRequest = restRequest;
 
 		//Set global client level headers
 		for(Iterator<String> iterator = headers.keySet().iterator(); iterator.hasNext();){
@@ -63,7 +58,6 @@ public class DefaultRESTClient extends AbstractRESTClient {
 		Log.i(TAG, "Headers set on the connection: "+connection.getRequestProperties());
 
 		if(shallHandleBody(restRequest.getMethod())){
-			outputStreamInUse = true;
 			connection.setDoOutput(true);
 		}
 
@@ -101,7 +95,7 @@ public class DefaultRESTClient extends AbstractRESTClient {
 	 */
 	@Override
 	public InputStream getInputStream() throws IOException {
-		if(isConnected && !inputStreamInUse){
+		if(isConnected){
 			return connection.getInputStream();
 		}
 		throw new IOException("Couldn't open input stream: input stream already marked for use or connection is in invaid state!");

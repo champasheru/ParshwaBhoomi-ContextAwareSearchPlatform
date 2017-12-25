@@ -63,6 +63,14 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
     		}
     	}catch(SQLException e){
     		LogManager.getLogger().error("Couldn't add basic user profile!", e);
+    	}finally{
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException e) {
+				LogManager.getLogger().error("Couldn't add basic user profile!", e);
+			}
     	}
     }
     
@@ -87,14 +95,20 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
                     statement.setString(3, pref.trim());
                     status = statement.executeUpdate();
                     if (status > 0) {
-                    	LogManager.getLogger().info("The MULTIPLE User Preferences added successfully for category: "+category.name());
+                    	LogManager.getLogger().info("User Preferences added successfully for category: "+category.name());
                     }
                }//end of if the pref for category has some valid value
             }
         } catch (SQLException sqle) {
         	LogManager.getLogger().error("Error:Adding user preferences ", sqle);
         } finally {
-            
+        	try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException e) {
+				LogManager.getLogger().error("Error:Adding user preferences ", e);
+			}
         }
     }
     
@@ -115,13 +129,13 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
             } catch (SQLException sqle) {
             	LogManager.getLogger().error("Error:Updating the USER PREFS info", sqle);
             } finally {
-            	if(statement != null){
-            		try {
-						statement.close();
-					} catch (SQLException e) {
-						LogManager.getLogger().error("Error:Updating the USER PREFS info", e);
-					}
-            	}
+            	try {
+    				if (statement != null) {
+    					statement.close();
+    				}
+    			} catch (SQLException e) {
+    				LogManager.getLogger().error("Error:Updating the USER PREFS info", e);
+    			}
             }
         }
     }
@@ -162,13 +176,13 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
         } catch (SQLException sqle) {
         	LogManager.getLogger().error("Error:Updating the Basic UserCredential info", sqle);
         } finally {
-        	if(statement != null){
-        		try {
+        	try {
+				if (statement != null) {
 					statement.close();
-				} catch (SQLException e) {
-					LogManager.getLogger().error("Error:Updating the Basic UserCredential info", e);
 				}
-        	}
+			}catch (SQLException e) {
+				LogManager.getLogger().error("Error:Updating the Basic UserCredential info", e);
+			}
         }
         
         return status;
@@ -251,22 +265,16 @@ public class EndUserDaoImpl extends AbstractRawDao implements EndUserDao {
         } catch (SQLException sqle) {
         	LogManager.getLogger().error("Error:retrieving detailed user profile"+ sqle);
         } finally {
-        	if(rs != null){
-        		try {
-					rs.close();
-				} catch (SQLException e) {
-					LogManager.getLogger().error("Error:retrieving detailed user profile"+ e);
+        	try {
+				if (statement != null) {
+					statement.close();
 				}
-        	}
-        	if(resultSet != null){
-        		try {
-        			resultSet.close();
-				} catch (SQLException e) {
-					LogManager.getLogger().error("Error:retrieving detailed user profile"+ e);
+				if (userPrefsStmt != null) {
+					userPrefsStmt.close();
 				}
-        	}
-            rs = null;
-            resultSet=null;
+			}catch (SQLException e) {
+				LogManager.getLogger().error("Error:retrieving detailed user profile"+ e);
+			}
         }
         
         return endUser;

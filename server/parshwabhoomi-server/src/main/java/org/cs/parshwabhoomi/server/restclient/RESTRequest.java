@@ -23,14 +23,14 @@ public interface RESTRequest {
 		APPLICATION_XML("application/xml"),
 		ALL("*/*");
 		
-		private String contentType;
+		private String value;
 		
-		private ContentType(String contentType){
-			this.contentType = contentType;
+		private ContentType(String value){
+			this.value = value;
 		}
 		
-		public String getContentType(){
-			return contentType;
+		public String getValue(){
+			return value;
 		}
 		
 	}

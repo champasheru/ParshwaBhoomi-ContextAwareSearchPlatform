@@ -24,9 +24,6 @@ import org.cs.parshwabhoomi.server.restclient.RESTRequest.Method;
 public class DefaultRESTClient extends AbstractRESTClient {
 	private HttpURLConnection connection;
 	private boolean isConnected = false;
-	private boolean outputStreamInUse = false;
-	private boolean inputStreamInUse = false;
-	private RESTRequest currentRequest;
 	
 	/* (non-Javadoc)
 	 * @see org.cs.parshwabhoomi.server.restclient.RESTClient#connect(org.cs.parshwabhoomi.server.restclient.RESTRequest)
@@ -55,18 +52,18 @@ public class DefaultRESTClient extends AbstractRESTClient {
 		
 		connection.setRequestMethod(restRequest.getMethod().name());
 		if(restRequest.getContentType() != null){
-			connection.setRequestProperty("Content-Type", restRequest.getContentType().name());
+			connection.setRequestProperty("Content-Type", restRequest.getContentType().getValue());
 		}
 		LogManager.getLogger().info("Headers set on the connection: "+connection.getRequestProperties());
 		
+		if(shallHandleBody(restRequest.getMethod())){
+			connection.setDoOutput(true);
+		}
+		
 		connection.connect();
 		
-		if(shallHandleBody(restRequest.getMethod())){
-			if(restRequest.getPayload() != null){
-				outputStreamInUse = true;
-				connection.setDoOutput(true);
-				connection.getOutputStream().write(restRequest.getPayload());
-			}
+		if(restRequest.getPayload() != null){
+			connection.getOutputStream().write(restRequest.getPayload());
 		}
 		
 		isConnected = true;
@@ -99,7 +96,7 @@ public class DefaultRESTClient extends AbstractRESTClient {
 	 */
 	@Override
 	public InputStream getInputStream() throws IOException {
-		if(isConnected && !inputStreamInUse){
+		if(isConnected){
 			return connection.getInputStream();
 		}
 		throw new IOException("Couldn't open input stream: input stream already marked for use or connection is in invaid state!");
@@ -110,7 +107,7 @@ public class DefaultRESTClient extends AbstractRESTClient {
 	 */
 	@Override
 	public OutputStream getOutputStream() throws IOException {
-		if(shallHandleBody(currentRequest.getMethod()) && isConnected && !outputStreamInUse){
+		if(connection.getDoOutput() && isConnected){
 			connection.setDoOutput(true);
 			return connection.getOutputStream();
 		}

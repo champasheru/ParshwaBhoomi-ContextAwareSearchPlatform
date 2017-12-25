@@ -38,22 +38,21 @@ public class UserCredentialDaoImpl extends AbstractRawDao implements UserCredent
             
             int status = statement.executeUpdate();
             if (status > 0) {
-                System.out.println("__The UserCredential added successfully!");
+                LogManager.getLogger().info("User Credential added successfully!");
                 rs = connection.createStatement().executeQuery(userIDQuery);
                 if(rs.next()){
                     userID = rs.getInt("id");
                 }
             }
         } catch (SQLException sqle) {
-            System.out.println("Error:Adding user info " + sqle);
+        	LogManager.getLogger().error("Error:Adding user info!", sqle);
         } finally {
         	try {
-        		if(rs != null){
-        			rs.close();
+        		if(statement != null){
+        			statement.close();
         		}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogManager.getLogger().error("Error:Adding user info!", e);
 			}
         }
         
@@ -69,7 +68,7 @@ public class UserCredentialDaoImpl extends AbstractRawDao implements UserCredent
                        +"and password = ?";
         
         boolean status=false;
-        PreparedStatement statement=null;
+        PreparedStatement statement = null;
         ResultSet rs = null;
         try {
         	statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -83,9 +82,15 @@ public class UserCredentialDaoImpl extends AbstractRawDao implements UserCredent
                 }
             }
         } catch (SQLException sqle) {
-            System.out.println("__Error:retrieving search results"+ sqle);
+        	LogManager.getLogger().error("Error:retrieving user creds!", sqle);
         } finally {
-            rs = null;
+        	try {
+        		if(statement != null){
+        			statement.close();
+        		}
+			} catch (SQLException e) {
+				LogManager.getLogger().error("Error:retrieving user creds!", e);
+			}
         }
         return status;
     }
