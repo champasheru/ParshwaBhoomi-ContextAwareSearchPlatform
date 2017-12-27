@@ -46,7 +46,7 @@ public class GoogleSearchService {
 				searchResults = dtoAdapter.buildResponse(inputStream);
 				inputStream.close();
 			}
-//			InputStream inputStream = new FileInputStream("/Users/saurabh/csrepos/Parshwabhoomi/docs/GoogleCustomSearchResponse_q_ai.json");
+//			InputStream inputStream = new FileInputStream("/Users/gayatri/csrepos/Parshwabhoomi/docs/GoogleCustomSearchResponse_q_ai.json");
 //			GoogleSearchResultResponseDTOAdapter dtoAdapter = new GoogleSearchResultResponseDTOAdapter();
 //			searchResults = dtoAdapter.buildResponse(inputStream);
 //			inputStream.close();

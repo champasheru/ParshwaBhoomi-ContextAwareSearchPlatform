@@ -1,9 +1,3 @@
-<%-- 
-    Document   : UserRegistration
-    Created on : May 14, 2011, 2:12:24 AM
-    Author     : saurabh
---%>
-
 <%@page import="java.util.Date"%>
 <%@page import="org.cs.parshwabhoomi.server.utils.DateTimeUtils"%>
 <%@page import="org.cs.parshwabhoomi.server.model.UserCredential"%>

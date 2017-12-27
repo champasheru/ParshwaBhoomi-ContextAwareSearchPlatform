@@ -26,16 +26,16 @@ public class Main {
 	
     public static void main(String[] args) {
     	SearchDaoImpl searchDaoImpl = (SearchDaoImpl)AppContext.getDefaultContext().getDaoProvider().getDAO("SearchDaoImpl");
-     	List<SearchResult> results = searchDaoImpl.findByMatchingUserPref("apple", "saurabh");
+     	List<SearchResult> results = searchDaoImpl.findByMatchingUserPref("apple", "gayatri");
      	LogManager.getLogger().info("Results found by matching user prefs= "+results.size());
-     	results = searchDaoImpl.findByMatchingVendorOfferings("apple", "saurabh");
+     	results = searchDaoImpl.findByMatchingVendorOfferings("apple", "gayatri");
      	LogManager.getLogger().info("Results found by matching vendor offerings = "+results.size());
      	
-     	List<String>modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingUserPref("apple", "saurabh");
+     	List<String>modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingUserPref("apple", "gayatri");
      	LogManager.getLogger().info("Modified search terms found by matching user prefs= "+modifiedSearchTerms.size());
-     	modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingUserPrefCategory("apple", "saurabh");
+     	modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingUserPrefCategory("apple", "gayatri");
      	LogManager.getLogger().info("Modified search terms found by matching user prefs category= "+modifiedSearchTerms.size());
-     	modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingVendorOfferingsCategory("apple", "saurabh");
+     	modifiedSearchTerms = searchDaoImpl.getModifiedSearchTermByMatchingVendorOfferingsCategory("apple", "gayatri");
      	LogManager.getLogger().info("Modified search terms found by matching vendor offerings category= "+modifiedSearchTerms.size());
      	searchDaoImpl.close();
      	
@@ -50,7 +50,7 @@ public class Main {
     	
 //    	SearchAggregator searchAggregator = new SearchAggregatorImpl();
 //    	UserCredential userCredential = new UserCredential();
-//    	userCredential.setUsername("saurabh");
+//    	userCredential.setUsername("gayatri");
 //    	userCredential.setRole(Role.END_USER);
 //    	SearchContext searchContext = new SearchContext(18.51657820F,73.84310780F, "apple", userCredential);
 //    	List<SearchResult> searchResults = searchAggregator.getResults(searchContext);

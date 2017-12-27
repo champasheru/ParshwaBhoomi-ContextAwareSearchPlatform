@@ -18,7 +18,7 @@ import org.cs.parshwabhoomi.server.dto.ErrorResponseDTO.HTTP_STATUS_CODE;
 import org.cs.parshwabhoomi.server.dto.adapter.SearchResultResponseDTOAdapter;
 import org.cs.parshwabhoomi.server.dto.adapter.SearchRquestDTOAdapter;
 import org.cs.parshwabhoomi.server.dto.search.SearchRequestDTO;
-import org.cs.parshwabhoomi.server.dto.search.SearchResultResponseDTO;
+import org.cs.parshwabhoomi.server.dto.search.SearchResultCommonDTO;
 import org.cs.parshwabhoomi.server.model.SearchContext;
 import org.cs.parshwabhoomi.server.model.SearchResult;
 import org.cs.parshwabhoomi.server.rest.AbstractResource;
@@ -55,8 +55,8 @@ public class SearchResourceImpl extends AbstractResource implements SearchResour
 			List<SearchResult> searchResults = aggregator.getResults(context);
 			
 			SearchResultResponseDTOAdapter responseDTOAdapter = new SearchResultResponseDTOAdapter(baseUrl);
-			List<SearchResultResponseDTO> dtos = responseDTOAdapter.buildResponse(searchResults);
-			GenericEntity<List<SearchResultResponseDTO>> gsr = new GenericEntity<List<SearchResultResponseDTO>>(dtos){};
+			List<SearchResultCommonDTO> dtos = responseDTOAdapter.buildResponse(searchResults);
+			GenericEntity<List<SearchResultCommonDTO>> gsr = new GenericEntity<List<SearchResultCommonDTO>>(dtos){};
 			response = Response.ok(gsr).build();
 		}catch(Exception e){
 			ErrorResponseDTO errorResponseDTO = RestUtils.createErrorResponseDTO(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR, "Couldn't serve search results! Please try again.");
@@ -66,5 +66,14 @@ public class SearchResourceImpl extends AbstractResource implements SearchResour
 		
 		return response;
 	}
+
+	@Override
+	public Response save(SearchResultCommonDTO requestDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
 
 }

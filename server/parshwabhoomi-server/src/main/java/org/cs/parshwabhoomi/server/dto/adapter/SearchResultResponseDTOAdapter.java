@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
-import org.cs.parshwabhoomi.server.dto.search.SearchResultResponseDTO;
+import org.cs.parshwabhoomi.server.dto.search.SearchResultCommonDTO;
 import org.cs.parshwabhoomi.server.model.SearchResult;
 
 /**
@@ -31,9 +31,9 @@ public class SearchResultResponseDTOAdapter {
 		this.baseUrl = baseUrl;
 	}
 
-	public List<SearchResultResponseDTO> buildResponse(List<SearchResult> searchResults){
+	public List<SearchResultCommonDTO> buildResponse(List<SearchResult> searchResults){
 		LogManager.getLogger().info("Building seach response DTO list....");
-		List<SearchResultResponseDTO> dtos = new ArrayList<>(searchResults.size());
+		List<SearchResultCommonDTO> dtos = new ArrayList<>(searchResults.size());
 		for(SearchResult searchResult : searchResults){
 			dtos.add(buildResponse(searchResult));
 		}
@@ -41,10 +41,10 @@ public class SearchResultResponseDTOAdapter {
 	}
 	
 	
-	public SearchResultResponseDTO buildResponse(SearchResult searchResult){
+	public SearchResultCommonDTO buildResponse(SearchResult searchResult){
 //		LogManager.getLogger().info("Building single seach response DTO....");
 		
-		SearchResultResponseDTO dto = new SearchResultResponseDTO();
+		SearchResultCommonDTO dto = new SearchResultCommonDTO();
 		
 		if(searchResult.getType().name().startsWith("TYPE_PB_")){
 			String url = baseUrl+searchResult.getVendorID();

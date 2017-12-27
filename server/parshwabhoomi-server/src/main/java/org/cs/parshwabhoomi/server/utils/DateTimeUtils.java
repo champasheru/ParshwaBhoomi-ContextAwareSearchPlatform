@@ -10,8 +10,8 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class DateTimeUtils {

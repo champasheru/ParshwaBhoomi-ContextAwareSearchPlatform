@@ -3,14 +3,19 @@
  */
 package org.cs.parshwabhoomi.server.dto.search;
 
-import org.cs.parshwabhoomi.server.dto.AbstractResponseDTO;
+import org.cs.parshwabhoomi.server.dto.DTO;
 
 /**
  * @author gayatri
  * git: champasheru dange.gayatri@gmail.com
+ * 
+ * This is a common class for both search result request and response.
+ * Typically, search resource return the instances of this class as responses
+ * to the search query received, while it receives the instance of this class
+ * when the user search history is to be preserved/posted.
  *
  */
-public class SearchResultResponseDTO extends AbstractResponseDTO {
+public class SearchResultCommonDTO implements DTO {
 	private String title;
 	private String tagline;
 	private String htmlTitle;

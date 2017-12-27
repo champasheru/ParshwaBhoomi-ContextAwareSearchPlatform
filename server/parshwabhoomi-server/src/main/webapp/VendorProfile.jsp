@@ -1,9 +1,3 @@
-<%-- 
-    Document   : VendorRegistration
-    Created on : May 14, 2011, 2:09:34 AM
-    Author     : saurabh
---%>
-
 <%@page import="java.util.List"%>
 <%@page import="org.cs.parshwabhoomi.server.core.GoogleMapsService"%>
 <%@page import="org.cs.parshwabhoomi.server.model.UserCredential"%>

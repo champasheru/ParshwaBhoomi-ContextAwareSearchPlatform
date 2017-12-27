@@ -3,27 +3,11 @@
     <servlet>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
     </servlet>
-    <servlet>
-        <servlet-name>SearchServlet</servlet-name>
-        <servlet-class>org.cs.parshwabhoomi.server.servlets.SearchServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>org.cs.parshwabhoomi.server.servlets.LoginServlet</servlet-class>
-    </servlet>
-    
     <servlet-mapping>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SearchServlet</servlet-name>
-        <url-pattern>/Search</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
+    
     <session-config>
         <session-timeout>
             30

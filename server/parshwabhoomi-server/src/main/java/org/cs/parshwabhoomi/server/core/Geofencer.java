@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.cs.parshwabhoomi.server.model.SearchResult;
 
 /**
- * @author saurabh
- * git: champasheru saurabh.cse2@gmail.com
+ * @author gayatri
+ * git: champasheru dange.gayatri@gmail.com
  *
  */
 public class Geofencer {
