@@ -2,6 +2,7 @@ package org.cs.parshwabhoomiapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,7 +141,7 @@ public class ListAdapter extends BaseAdapter implements AdapterView.OnItemClickL
             srViewHolder.title = (TextView) convertView.findViewById(R.id.title);
             srViewHolder.tagline = (TextView) convertView.findViewById(R.id.tagline);
             srViewHolder.snippet = (TextView) convertView.findViewById(R.id.snippet);
-            srViewHolder.businessCategory = (TextView) convertView.findViewById(R.id.type);
+            srViewHolder.businessCategory = (TextView) convertView.findViewById(R.id.businessCategory);
             srViewHolder.type = (TextView) convertView.findViewById(R.id.type);
             srViewHolder.provider = (TextView) convertView.findViewById(R.id.provider);
             srViewHolder.displayLink = (TextView) convertView.findViewById(R.id.displayLink);
@@ -159,14 +160,31 @@ public class ListAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         srViewHolder.type.setText(searchResult.getType());
         srViewHolder.provider.setText(searchResult.getProvider());
         srViewHolder.displayLink.setText(searchResult.getDisplayLink());
+        if(searchResult.getType().contains("TYPE_PB") || searchResult.getProvider().contains("PARSHWABHOOMI")){
+            convertView.setBackgroundColor(Color.parseColor("#F9F9F9"));
+        }else{
+            convertView.setBackgroundColor(Color.WHITE);
+        }
 
         return convertView;
     }
 
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
         SearchResult searchResult = results.get(position);
-        Log.i(TAG, "URL="+searchResult.getDisplayLink());
-        Intent browserIntent = new Intent("android.intent.action.VIEW", Uri.parse((searchResult).getDisplayLink()));
-        context.startActivity(browserIntent);
+        String url = "";
+        if(searchResult.getType().contains("TYPE_PB")){
+            url = searchResult.getDisplayLink();
+        }else {
+            url = searchResult.getLink();
+        }
+        Log.i(TAG, "URL="+url);
+
+        Intent i = new Intent();
+        i.putExtra("url", url);
+        i.setClassName(context, WebViewActivity.class.getName());
+        Log.i(TAG, "Starting web view activity...");
+        context.startActivity(i);
+//        Intent browserIntent = new Intent("android.intent.action.VIEW", Uri.parse((searchResult).getDisplayLink()));
+//        context.startActivity(browserIntent);
     }
 }

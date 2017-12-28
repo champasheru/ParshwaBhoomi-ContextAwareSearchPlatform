@@ -7,15 +7,17 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:textColor="#000000"
+        android:textColor="#0000B5"
+        android:textStyle="bold"
         android:paddingBottom="2dp"
 	/>
     <TextView android:id="@+id/tagline"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
+        android:textStyle="italic"
         android:layout_alignParentLeft="true"
-        android:textColor="#555555"
+        android:textColor="#00AB00"
         android:paddingBottom="2dp"
 	/>
     <TextView android:id="@+id/snippet"
@@ -23,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/displayLink"
         android:layout_alignParentLeft="true"
-        android:textColor="#cbcbcb"
+        android:textColor="#545454"
         />
     <TextView android:id="@+id/businessCategory"
         android:layout_width="fill_parent"
@@ -37,21 +39,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/snippet"
         android:layout_alignParentLeft="true"
-        android:textColor="#787878"
+        android:textColor="#006B00"
         />
     <TextView android:id="@+id/provider"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/type"
         android:layout_alignParentLeft="true"
-        android:textColor="#787878"
+        android:textColor="#006B00"
         />
     <TextView android:id="@+id/displayLink"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tagline"
         android:layout_alignParentLeft="true"
-        android:textColor="#555555"
+        android:textColor="#00007F"
         android:paddingBottom="2dp"
 	/>
 </RelativeLayout>
