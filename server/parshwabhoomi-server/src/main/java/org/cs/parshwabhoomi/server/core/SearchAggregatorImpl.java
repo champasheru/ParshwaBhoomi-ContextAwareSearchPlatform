@@ -150,7 +150,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
         	String[] parts = term.split("::");
         	assert(parts.length == 2);
         	
-        	term = parts[0]+" "+address.getRouteOrLane()+","+address.getSublocality()+","+address.getLocality();
+        	term = parts[0]+" "+address.getFormattedAddress();
         	LogManager.getLogger().info("The modified User pref search term with location:"+term);
         	List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
         	for(SearchResult result: searchServiceResults){
@@ -186,7 +186,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
         	String cateogry = term;
         	categories.put(term, term);
         	
-        	term = term+" "+address.getRouteOrLane()+","+address.getSublocality()+","+address.getLocality();
+        	term = term+" "+address.getFormattedAddress();
         	LogManager.getLogger().info("The modified User pref category search term with location "+term);
         	List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
         	for(SearchResult result: searchServiceResults){
@@ -225,7 +225,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
         		//In such case, we dont want to call the Google service again as the results are already fetched.
         		String category = term;
         		categories.put(term, term);
-        		term = term+" "+address.getRouteOrLane()+","+address.getSublocality()+","+address.getLocality();
+        		term = term+" "+address.getFormattedAddress();
             	LogManager.getLogger().info("The modified Vendor business category search term with location "+term);
             	List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
             	for(SearchResult result: searchServiceResults){
@@ -250,7 +250,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
 		LogManager.getLogger().info("Building search service results using Original search term and Location...");
 		
 		GoogleSearchService googleSearchService = new GoogleSearchService();
-		String term = searchContext.getQuery().trim()+" "+address.getRouteOrLane()+","+address.getSublocality()+","+address.getLocality();
+		String term = searchContext.getQuery().trim()+" "+address.getFormattedAddress();
 		List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
 		for(SearchResult result: searchServiceResults){
     		result.setType(Type.TYPE_SEARCH_ENGINE_LOCATION);

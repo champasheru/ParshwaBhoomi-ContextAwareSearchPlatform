@@ -19,7 +19,7 @@ public class Geofencer {
 	private float lng;
 	//in KM
 	private float radius;
-	public static final float DEFAULT_RADIUS_IN_KM = 7;
+	public static final float DEFAULT_RADIUS_IN_KM = 20;
 	
 	
 	/**

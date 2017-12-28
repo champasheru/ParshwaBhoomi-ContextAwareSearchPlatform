@@ -133,6 +133,22 @@ public class Address {
 	 * @return human readable formatted address.
 	 */
 	public String getFormattedAddress() {
-		return routeOrLane+", "+sublocality+", "+locality+", "+state+", "+pincode;
+		StringBuffer stringBuffer = new StringBuffer();
+		if(routeOrLane != null){
+			stringBuffer.append(routeOrLane+",");
+		}
+		if(sublocality != null){
+			stringBuffer.append(sublocality+",");
+		}
+		if(locality != null){
+			stringBuffer.append(locality+",");
+		}
+		if(state != null){
+			stringBuffer.append(state+",");
+		}
+		if(pincode != null){
+			stringBuffer.append(pincode);
+		}
+		return stringBuffer.toString();
 	}
 }
