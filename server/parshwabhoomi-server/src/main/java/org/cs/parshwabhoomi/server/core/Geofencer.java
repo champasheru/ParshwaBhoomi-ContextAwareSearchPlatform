@@ -72,11 +72,12 @@ public class Geofencer {
 	 * @return all the search results that fall outside the radius/geofence from the user's lat long as a center.
 	 */
 	public List<SearchResult> findOutsideFence(List<SearchResult> list){
-		LogManager.getLogger().info("Finding all the vendors within radius of:"+radius+" from:"+lat+", "+lng);
+		LogManager.getLogger().info("Finding all the vendors outside radius of:"+radius+" from:"+lat+", "+lng);
 		
 		List<SearchResult> results = new ArrayList<>();
 		for(SearchResult result : list){
 			if(result.getAddress().getLatitude() == null || result.getAddress().getLongitude() == null){
+				LogManager.getLogger().info("Vendor found outside radius due to missing lat/long:"+result.getTitle());
 				results.add(result);
 			}else{
 				float vlat = Float.parseFloat(result.getAddress().getLatitude());
@@ -87,7 +88,7 @@ public class Geofencer {
 				}
 			}
 		}
-		LogManager.getLogger().info("Num Vendors found within radius:"+results.size());
+		LogManager.getLogger().info("Num Vendors found outside radius:"+results.size());
 		return results;
 	}
 	

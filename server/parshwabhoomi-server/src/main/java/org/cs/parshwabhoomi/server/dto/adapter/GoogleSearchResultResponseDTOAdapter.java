@@ -108,7 +108,7 @@ public class GoogleSearchResultResponseDTOAdapter {
 			}
 		}
 		
-		LogManager.getLogger().info("Total search results parsed: "+results.size());
+		//LogManager.getLogger().info("Total search results parsed: "+results.size());
 		
 		return results;
 	}

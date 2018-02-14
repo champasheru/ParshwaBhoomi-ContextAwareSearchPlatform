@@ -150,7 +150,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
         	String[] parts = term.split("::");
         	assert(parts.length == 2);
         	
-        	term = parts[0]+" "+address.getFormattedAddress();
+        	term = parts[0]+" "+address.getLocality();
         	LogManager.getLogger().info("The modified User pref search term with location:"+term);
         	List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
         	for(SearchResult result: searchServiceResults){
@@ -186,7 +186,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
         	String cateogry = term;
         	categories.put(term, term);
         	
-        	term = term+" "+address.getFormattedAddress();
+        	term = term+" "+address.getLocality();
         	LogManager.getLogger().info("The modified User pref category search term with location "+term);
         	List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
         	for(SearchResult result: searchServiceResults){
@@ -221,11 +221,11 @@ public class SearchAggregatorImpl implements SearchAggregator {
         
         for(String term : modifiedSearchTerms){
         	if(categories.get(term) == null){
-        		//It might happen that ByMatchingUserPrefCategory and ByMatchingVendorOfferingsCategory return the same cateogy.
+        		//It might happen that ByMatchingUserPrefCategory and ByMatchingVendorOfferingsCategory return the same category.
         		//In such case, we dont want to call the Google service again as the results are already fetched.
         		String category = term;
         		categories.put(term, term);
-        		term = term+" "+address.getFormattedAddress();
+        		term = term+" "+address.getLocality();
             	LogManager.getLogger().info("The modified Vendor business category search term with location "+term);
             	List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
             	for(SearchResult result: searchServiceResults){
@@ -250,7 +250,7 @@ public class SearchAggregatorImpl implements SearchAggregator {
 		LogManager.getLogger().info("Building search service results using Original search term and Location...");
 		
 		GoogleSearchService googleSearchService = new GoogleSearchService();
-		String term = searchContext.getQuery().trim()+" "+address.getFormattedAddress();
+		String term = searchContext.getQuery().trim()+" "+address.getLocality();
 		List<SearchResult> searchServiceResults = googleSearchService.getResults(term);
 		for(SearchResult result: searchServiceResults){
     		result.setType(Type.TYPE_SEARCH_ENGINE_LOCATION);

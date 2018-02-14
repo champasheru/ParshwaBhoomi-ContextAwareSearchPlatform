@@ -64,6 +64,7 @@ public class RawDaoProviderImpl implements RawDaoProvider {
 		classname = packageName+"."+classname;
 		LogManager.getLogger().info("Returning the DAO for: "+classname);
 		
+		//Context context = null;
 		try {
 			Class<? extends RawDao> daoClass = (Class<? extends RawDao>) Class.forName(classname);
 			dao = daoClass.newInstance();
@@ -87,8 +88,13 @@ public class RawDaoProviderImpl implements RawDaoProvider {
 
 				The list of drivers in java.sql.DriverManager is also a known source of memory leaks. Any Drivers registered by a web application must be deregistered when the web application stops. Tomcat will attempt to automatically discover and deregister any JDBC drivers loaded by the web application class loader when the web application stops. However, it is expected that applications do this for themselves via a ServletContextListener.
 				 */
+//				LogManager.getLogger().info("Using DataSource to provide DB connection...");
+//				context = new InitialContext();
+//				DataSource dataSource = (DataSource)context.lookup("java:/comp/env/jdbc/pb");
+//				Connection conn = dataSource.getConnection();
 				Class.forName(connProperties.getProperty(CONN_DRIVER));
 				Connection conn = DriverManager.getConnection(connProperties.getProperty(CONN_URL), connProperties.getProperty(CONN_USERNAME), connProperties.getProperty(CONN_PASSWORD));
+				dao.set(conn);
 				dao.set(conn);
 			}
 		} catch (ClassNotFoundException e) {
@@ -107,7 +113,12 @@ public class RawDaoProviderImpl implements RawDaoProvider {
 			e.printStackTrace();
 			LogManager.getLogger().error("Can't create DAO: not able to create a JDBC connection!");
 			LogManager.getLogger().error("Exception : "+e);
-		}
+		} 
+//		catch (NamingException e) {
+//			e.printStackTrace();
+//			LogManager.getLogger().error("Can't create DAO: not able to create a JDBC connection!");
+//			LogManager.getLogger().error("Exception : "+e);
+//		}
 		
 		return dao;
 	}
